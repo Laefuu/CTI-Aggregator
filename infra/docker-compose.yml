@@ -1,0 +1,187 @@
+version: "3.9"
+
+# ── Common settings ───────────────────────────────────────────
+x-common: &common
+  restart: unless-stopped
+  env_file: ../.env
+  networks: [cti-net]
+
+# ── Common healthcheck defaults ───────────────────────────────
+x-healthcheck-defaults: &hc-defaults
+  interval: 10s
+  timeout: 5s
+  retries: 5
+  start_period: 10s
+
+services:
+
+  # ── Infrastructure ──────────────────────────────────────────
+
+  postgres:
+    <<: *common
+    image: pgvector/pgvector:pg16
+    environment:
+      POSTGRES_DB:       cti
+      POSTGRES_USER:     cti
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./postgres/init.sql:/docker-entrypoint-initdb.d/01_init.sql:ro
+    healthcheck:
+      <<: *hc-defaults
+      test: ["CMD-SHELL", "pg_isready -U cti -d cti"]
+    # Not exposed on host — accessible only within cti-net
+
+  redis:
+    <<: *common
+    image: redis:7-alpine
+    command: >
+      redis-server /etc/redis/redis.conf
+      --requirepass ${REDIS_PASSWORD}
+    volumes:
+      - redis_data:/data
+      - ./redis/redis.conf:/etc/redis/redis.conf:ro
+    healthcheck:
+      <<: *hc-defaults
+      test: ["CMD", "redis-cli", "-a", "${REDIS_PASSWORD}", "ping"]
+    # Not exposed on host — accessible only within cti-net
+
+  ollama:
+    # Runs in host network mode so the GPU is accessible
+    # Binds to 127.0.0.1 only — not reachable from the network
+    image: ollama/ollama:latest
+    restart: unless-stopped
+    network_mode: host
+    environment:
+      OLLAMA_HOST: "127.0.0.1:11434"
+    volumes:
+      - ollama_models:/root/.ollama
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: 1
+              capabilities: [gpu]
+    # No healthcheck — checked by llm-normalizer at startup
+
+  nginx:
+    <<: *common
+    image: nginx:1.27-alpine
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./nginx/cti.conf:/etc/nginx/conf.d/default.conf:ro
+      - ./nginx/certs:/etc/nginx/certs:ro
+      - ../frontend/dist:/usr/share/nginx/html:ro
+    depends_on:
+      api:
+        condition: service_started
+    healthcheck:
+      <<: *hc-defaults
+      test: ["CMD-SHELL", "wget -qO- http://localhost/health || exit 1"]
+
+  # ── Pipeline modules ────────────────────────────────────────
+
+  collector:
+    <<: *common
+    build:
+      context: ..
+      dockerfile: modules/collector/Dockerfile
+    environment:
+      MODULE_NAME: collector
+    depends_on:
+      postgres: {condition: service_healthy}
+      redis:    {condition: service_healthy}
+
+  preprocessor:
+    <<: *common
+    build:
+      context: ..
+      dockerfile: modules/preprocessor/Dockerfile
+    environment:
+      MODULE_NAME: preprocessor
+    depends_on:
+      redis: {condition: service_healthy}
+
+  llm-normalizer:
+    <<: *common
+    build:
+      context: ..
+      dockerfile: modules/llm_normalizer/Dockerfile
+    # Host network required to reach Ollama on 127.0.0.1:11434
+    network_mode: host
+    environment:
+      MODULE_NAME: llm
+      REDIS_HOST:  "127.0.0.1"
+      POSTGRES_HOST: "127.0.0.1"
+    depends_on:
+      redis:    {condition: service_healthy}
+
+  validator:
+    <<: *common
+    build:
+      context: ..
+      dockerfile: modules/validator/Dockerfile
+    environment:
+      MODULE_NAME: validator
+    depends_on:
+      redis:    {condition: service_healthy}
+      postgres: {condition: service_healthy}
+
+  deduplicator:
+    <<: *common
+    build:
+      context: ..
+      dockerfile: modules/deduplicator/Dockerfile
+    environment:
+      MODULE_NAME: dedup
+    depends_on:
+      redis:    {condition: service_healthy}
+      postgres: {condition: service_healthy}
+
+  store:
+    <<: *common
+    build:
+      context: ..
+      dockerfile: modules/store/Dockerfile
+    environment:
+      MODULE_NAME: store
+    depends_on:
+      postgres: {condition: service_healthy}
+      redis:    {condition: service_healthy}
+
+  enricher:
+    <<: *common
+    build:
+      context: ..
+      dockerfile: modules/enricher/Dockerfile
+    environment:
+      MODULE_NAME: enricher
+    depends_on:
+      postgres: {condition: service_healthy}
+      redis:    {condition: service_healthy}
+
+  api:
+    <<: *common
+    build:
+      context: ..
+      dockerfile: modules/api/Dockerfile
+    environment:
+      MODULE_NAME: api
+    depends_on:
+      postgres: {condition: service_healthy}
+      redis:    {condition: service_healthy}
+    # Exposed for direct access during development (optional)
+    # ports:
+    #   - "8000:8000"
+
+volumes:
+  postgres_data:
+  redis_data:
+  ollama_models:
+
+networks:
+  cti-net:
+    driver: bridge

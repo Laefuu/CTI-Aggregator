@@ -1,0 +1,56 @@
+# ── Secrets ───────────────────────────────────────────────────
+.env
+*.key
+*.pem
+*.crt
+!*.crt.example
+
+# ── Python ────────────────────────────────────────────────────
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+*.egg-info/
+dist/
+build/
+.eggs/
+.venv/
+venv/
+.uv/
+
+# ── Type checking / linting ───────────────────────────────────
+.mypy_cache/
+.ruff_cache/
+.dmypy.json
+
+# ── Tests ─────────────────────────────────────────────────────
+.pytest_cache/
+.coverage
+htmlcov/
+coverage.xml
+
+# ── Docker volumes (if mounted locally) ───────────────────────
+infra/volumes/
+
+# ── Ollama models (large binary files) ───────────────────────
+infra/ollama/models/
+
+# ── IDE ───────────────────────────────────────────────────────
+.idea/
+.vscode/
+*.swp
+*.swo
+.DS_Store
+
+# ── Frontend build ────────────────────────────────────────────
+frontend/dist/
+frontend/node_modules/
+frontend/.vite/
+
+# ── Logs ──────────────────────────────────────────────────────
+*.log
+logs/
+
+# ── Benchmark results (keep the template, ignore actual results) ──
+infra/ollama/benchmark_results.json

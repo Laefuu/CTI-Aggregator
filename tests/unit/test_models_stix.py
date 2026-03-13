@@ -125,7 +125,7 @@ class TestIndicatorInvalidIoC:
             IndicatorSTIX(**make_indicator("[domain-name:value = 'not_a_domain']"))
 
     def test_domain_too_short_rejected(self) -> None:
-        with pytest.raises(ValueError, match="too short"):
+        with pytest.raises(ValueError, match="Invalid domain"):
             IndicatorSTIX(**make_indicator("[domain-name:value = 'a.b']"))
 
     def test_url_no_scheme_rejected(self) -> None:

@@ -1,6 +1,9 @@
 .DEFAULT_GOAL := help
-COMPOSE := docker compose -f infra/docker-compose.yml
+COMPOSE := docker compose -f infra/docker-compose.yml --env-file .env
 MODULE_NAME ?= unknown
+
+# Fix Docker client/daemon API version mismatch
+export DOCKER_API_VERSION=1.43
 
 .PHONY: help up down build restart logs migrate pull-model \
         run-source test test-unit test-integration test-llm \
@@ -64,7 +67,8 @@ shell-db: ## Open a psql shell
 # ── Redis ─────────────────────────────────────────────────────────────────────
 
 shell-redis: ## Open a redis-cli shell
-	$(COMPOSE) exec redis redis-cli -a $${REDIS_PASSWORD}
+	@REDIS_PASSWORD=$$(grep '^REDIS_PASSWORD=' .env | cut -d= -f2) && \
+	$(COMPOSE) exec redis redis-cli -a $$REDIS_PASSWORD
 
 streams: ## Show all Redis stream lengths
 	$(COMPOSE) exec redis redis-cli -a $${REDIS_PASSWORD} \

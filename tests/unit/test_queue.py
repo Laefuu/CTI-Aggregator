@@ -110,21 +110,20 @@ class TestConsumeStream:
         payload = {"source_id": "abc", "type": "rss"}
         serialised = json.dumps(payload)
 
-        call_count = 0
+        received: list[dict] = []
 
         async def handler(data: dict) -> None:
-            nonlocal call_count
-            call_count += 1
-            assert data == payload
-            # Stop the consumer after first message
-            raise asyncio.CancelledError
+            received.append(data)
+            # Handler succeeds — does NOT raise here
 
         mock_redis = AsyncMock()
         mock_redis.xgroup_create = AsyncMock(
             side_effect=__import__("redis").exceptions.ResponseError("BUSYGROUP ...")
         )
-        mock_redis.xreadgroup = AsyncMock(return_value=[
-            (STREAM_RAW, [("1234-0", {"data": serialised})])
+        # First call: one message. Second call: CancelledError to stop the loop.
+        mock_redis.xreadgroup = AsyncMock(side_effect=[
+            [(STREAM_RAW, [("1234-0", {"data": serialised})])],
+            asyncio.CancelledError(),
         ])
         mock_redis.xack = AsyncMock()
 
@@ -132,7 +131,8 @@ class TestConsumeStream:
             with pytest.raises(asyncio.CancelledError):
                 await consume_stream(STREAM_RAW, "group", "consumer-1", handler)
 
-        assert call_count == 1
+        assert len(received) == 1
+        assert received[0] == payload
         mock_redis.xack.assert_called_once_with(STREAM_RAW, "group", "1234-0")
 
     async def test_handler_failure_does_not_ack(self) -> None:

@@ -1,10 +1,13 @@
-version: "3.9"
-
 # ── Common settings ───────────────────────────────────────────
 x-common: &common
   restart: unless-stopped
   env_file: ../.env
   networks: [cti-net]
+
+# ── Common settings without network (for host-network services) ──
+x-common-host: &common-host
+  restart: unless-stopped
+  env_file: ../.env
 
 # ── Common healthcheck defaults ───────────────────────────────
 x-healthcheck-defaults: &hc-defaults
@@ -56,6 +59,13 @@ services:
       OLLAMA_HOST: "127.0.0.1:11434"
     volumes:
       - ollama_models:/root/.ollama
+    # GPU profile — only activated when running: make up-infra GPU=1
+    # Without GPU, Ollama runs on CPU (slower but functional for dev/testing)
+
+  ollama-gpu:
+    extends:
+      service: ollama
+    profiles: [gpu]
     deploy:
       resources:
         reservations:
@@ -63,7 +73,6 @@ services:
             - driver: nvidia
               count: 1
               capabilities: [gpu]
-    # No healthcheck — checked by llm-normalizer at startup
 
   nginx:
     <<: *common
@@ -74,13 +83,12 @@ services:
     volumes:
       - ./nginx/cti.conf:/etc/nginx/conf.d/default.conf:ro
       - ./nginx/certs:/etc/nginx/certs:ro
-      - ../frontend/dist:/usr/share/nginx/html:ro
-    depends_on:
-      api:
-        condition: service_started
+      # frontend/dist is populated by `npm run build` — mount only if it exists
+      # - ../frontend/dist:/usr/share/nginx/html:ro
     healthcheck:
       <<: *hc-defaults
-      test: ["CMD-SHELL", "wget -qO- http://localhost/health || exit 1"]
+      test: ["CMD", "wget", "--spider", "-q", "http://localhost/health"]
+    # depends_on api removed — api Dockerfile does not exist yet (Phase 2)
 
   # ── Pipeline modules ────────────────────────────────────────
 
@@ -106,7 +114,7 @@ services:
       redis: {condition: service_healthy}
 
   llm-normalizer:
-    <<: *common
+    <<: *common-host
     build:
       context: ..
       dockerfile: modules/llm_normalizer/Dockerfile

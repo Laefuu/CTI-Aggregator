@@ -49,7 +49,7 @@ async def record_metric(
                 text(
                     """
                     INSERT INTO pipeline_metrics (module, metric, value, labels)
-                    VALUES (:module, :metric, :value, :labels::jsonb)
+                    VALUES (:module, :metric, :value, CAST(:labels AS jsonb))
                     """
                 ),
                 {

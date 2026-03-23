@@ -28,9 +28,10 @@ def get_engine() -> AsyncEngine:
         settings.database_url,
         pool_size=10,
         max_overflow=20,
-        pool_pre_ping=True,       # Detect stale connections
-        pool_recycle=3600,        # Recycle connections every hour
-        echo=False,               # Set True for SQL query logging during debug
+        pool_pre_ping=True,
+        pool_recycle=3600,
+        echo=False,
+        connect_args={"ssl": False},
     )
 
 

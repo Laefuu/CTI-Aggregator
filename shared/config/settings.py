@@ -61,7 +61,7 @@ class Settings(BaseSettings):
     ollama_base_url: str = "http://127.0.0.1:11434"
     llm_model: str = "llama3.3:70b-instruct-q4_K_M"
     llm_fallback_model: str = "mistral:7b-instruct-q4_K_M"
-    llm_timeout_seconds: int = 120
+    llm_timeout_seconds: int = 600
     llm_num_ctx: int = 8192
 
     # ── Embeddings ────────────────────────────────────────────
@@ -125,3 +125,12 @@ def get_settings() -> Settings:
     Call get_settings() everywhere — never instantiate Settings() directly.
     """
     return Settings()
+
+@computed_field
+@property
+def database_url(self) -> str:
+    return (
+        f"postgresql+asyncpg://{self.postgres_user}:{self.postgres_password}"
+        f"@{self.postgres_host}:{self.postgres_port}/{self.postgres_db}"
+        f"?ssl=disable"
+    )

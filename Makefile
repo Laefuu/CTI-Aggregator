@@ -5,7 +5,8 @@ MODULE_NAME ?= unknown
 # Fix Docker client/daemon API version mismatch
 export DOCKER_API_VERSION=1.43
 
-.PHONY: help up down build restart logs migrate pull-model \
+.PHONY: help up down build restart logs migrate migrate-down \
+        migrate-status migrate-history migrate-new pull-model \
         run-source test test-unit test-integration test-llm \
         lint fmt audit shell-db shell-redis clean
 
@@ -49,17 +50,26 @@ ps: ## Show service status
 
 # ── Database ──────────────────────────────────────────────────────────────────
 
-migrate: ## Apply all pending Alembic migrations
-	$(COMPOSE) exec api alembic upgrade head
+# Alembic runs inside the store container so it can reach postgres on cti-net
+ALEMBIC := $(COMPOSE) run --rm --no-deps store uv run alembic -c modules/store/alembic.ini
+
+migrate: ## Apply all pending Alembic migrations (requires infra running)
+	$(ALEMBIC) upgrade head
 
 migrate-down: ## Rollback last migration
-	$(COMPOSE) exec api alembic downgrade -1
+	$(ALEMBIC) downgrade -1
 
 migrate-status: ## Show migration status
-	$(COMPOSE) exec api alembic current
+	$(ALEMBIC) current
 
 migrate-history: ## Show full migration history
-	$(COMPOSE) exec api alembic history --verbose
+	$(ALEMBIC) history --verbose
+
+migrate-new: ## Create a new migration file (MSG="description")
+ifndef MSG
+	$(error MSG is required. Usage: make migrate-new MSG="add column foo")
+endif
+	$(ALEMBIC) revision -m "$(MSG)"
 
 shell-db: ## Open a psql shell
 	$(COMPOSE) exec postgres psql -U cti -d cti

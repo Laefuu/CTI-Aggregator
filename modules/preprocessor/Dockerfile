@@ -14,4 +14,4 @@ COPY shared/ shared/
 COPY modules/preprocessor/ modules/preprocessor/
 RUN uv sync --no-dev
 
-CMD ["uv", "run", "python", "-m", "preprocessor"]
+CMD ["uv", "run", "python", "-m", "modules.preprocessor"]

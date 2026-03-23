@@ -8,4 +8,4 @@ COPY shared/ shared/
 COPY modules/validator/ modules/validator/
 RUN uv sync --no-dev
 
-CMD ["uv", "run", "python", "-m", "validator"]
+CMD ["uv", "run", "python", "-m", "modules.validator"]

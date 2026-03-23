@@ -186,7 +186,7 @@ class CollectorScheduler:
                         SET last_run_at = NOW(),
                             last_status = :status,
                             last_error  = :error
-                        WHERE id = :id::uuid
+                        WHERE id = CAST(:id AS uuid)
                     """),
                     {"id": source_id, "status": status, "error": error},
                 )

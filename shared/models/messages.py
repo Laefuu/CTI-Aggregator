@@ -124,6 +124,10 @@ class StixFinalMessage(_FrozenModel):
     action: DedupAction
     # Populated when action=merge: the stix_id of the existing canonical object
     target_stix_id: str | None = None
+    # Embedding vector (1024 dims) — empty list on merge (Store uses target's)
+    embedding: list[float] = []
+    # "exact" or "semantic" — populated on merge for metrics
+    merge_method: str | None = None
 
 
 # ── cti:enrichment ────────────────────────────────────────────

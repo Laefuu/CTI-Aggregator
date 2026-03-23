@@ -23,4 +23,4 @@ COPY modules/collector/ modules/collector/
 # Install the project itself
 RUN uv sync --no-dev
 
-CMD ["uv", "run", "python", "-m", "collector"]
+CMD ["uv", "run", "python", "-m", "modules.collector"]

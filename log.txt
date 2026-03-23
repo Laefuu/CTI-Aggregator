@@ -1,0 +1,1331 @@
+============================= test session starts ==============================
+platform linux -- Python 3.13.5, pytest-9.0.2, pluggy-1.6.0 -- /home/illan/cti/CTI-Aggregator/.venv/bin/python3
+cachedir: .pytest_cache
+rootdir: /home/illan/cti/CTI-Aggregator
+configfile: pyproject.toml
+plugins: cov-7.0.0, anyio-4.12.1, langsmith-0.7.17, asyncio-1.3.0
+asyncio: mode=Mode.AUTO, debug=False, asyncio_default_fixture_loop_scope=None, asyncio_default_test_loop_scope=function
+collecting ... collected 195 items
+
+tests/unit/test_api.py::TestAuthUtilities::test_hash_and_verify_password PASSED [  0%]
+tests/unit/test_api.py::TestAuthUtilities::test_create_and_decode_token PASSED [  1%]
+tests/unit/test_api.py::TestAuthUtilities::test_expired_token_raises PASSED [  1%]
+tests/unit/test_api.py::TestAuthUtilities::test_tampered_token_raises PASSED [  2%]
+tests/unit/test_api.py::TestSourceSchemas::test_valid_source_create PASSED [  2%]
+tests/unit/test_api.py::TestSourceSchemas::test_invalid_source_type PASSED [  3%]
+tests/unit/test_api.py::TestSourceSchemas::test_invalid_frequency PASSED [  3%]
+tests/unit/test_api.py::TestSourceSchemas::test_source_update_partial PASSED [  4%]
+tests/unit/test_api.py::TestPerimeterSchemas::test_valid_perimeter PASSED [  4%]
+tests/unit/test_api.py::TestPerimeterSchemas::test_alert_ack_valid PASSED [  5%]
+tests/unit/test_api.py::TestPerimeterSchemas::test_alert_ack_invalid PASSED [  5%]
+tests/unit/test_api.py::TestObjectSchemas::test_source_count_defaults_to_zero PASSED [  6%]
+tests/unit/test_api.py::TestObjectSchemas::test_list_response PASSED     [  6%]
+tests/unit/test_api.py::TestAPIEndpoints::test_health PASSED             [  7%]
+tests/unit/test_api.py::TestAPIEndpoints::test_login_bad_credentials FAILED [  7%]
+tests/unit/test_api.py::TestAPIEndpoints::test_sources_requires_auth PASSED [  8%]
+tests/unit/test_api.py::TestAPIEndpoints::test_objects_requires_auth PASSED [  8%]
+tests/unit/test_api.py::TestAPIEndpoints::test_perimeters_requires_auth PASSED [  9%]
+tests/unit/test_api.py::TestAPIEndpoints::test_alerts_requires_auth PASSED [  9%]
+tests/unit/test_collector_rss.py::TestRSSConnectorFetch::test_fetch_returns_documents_for_each_entry FAILED [ 10%]
+tests/unit/test_collector_rss.py::TestRSSConnectorFetch::test_fetch_falls_back_to_summary_on_article_fetch_failure FAILED [ 10%]
+tests/unit/test_collector_rss.py::TestRSSConnectorFetch::test_fetch_returns_empty_on_feed_fetch_failure FAILED [ 11%]
+tests/unit/test_collector_rss.py::TestRSSConnectorFetch::test_fetch_returns_empty_when_no_url FAILED [ 11%]
+tests/unit/test_collector_rss.py::TestRSSConnectorFetch::test_max_items_respected FAILED [ 12%]
+tests/unit/test_collector_rss.py::TestRSSConnectorFetch::test_short_content_skipped FAILED [ 12%]
+tests/unit/test_collector_rss.py::TestRSSConnectorFetch::test_published_date_parsed_from_tuple FAILED [ 13%]
+tests/unit/test_collector_rss.py::TestRawDocumentHash::test_same_content_same_hash PASSED [ 13%]
+tests/unit/test_collector_rss.py::TestRawDocumentHash::test_different_content_different_hash PASSED [ 14%]
+tests/unit/test_deduplicator.py::TestExactDedup::test_lookup_returns_none_when_absent PASSED [ 14%]
+tests/unit/test_deduplicator.py::TestExactDedup::test_lookup_returns_stix_id_when_found PASSED [ 15%]
+tests/unit/test_deduplicator.py::TestExactDedup::test_mark_exact_calls_setex FAILED [ 15%]
+tests/unit/test_deduplicator.py::TestExactDedup::test_pattern_hash_is_normalized PASSED [ 16%]
+tests/unit/test_deduplicator.py::TestExactDedup::test_pattern_hash_case_insensitive PASSED [ 16%]
+tests/unit/test_deduplicator.py::TestExactDedup::test_different_patterns_different_hashes PASSED [ 17%]
+tests/unit/test_deduplicator.py::TestEmbeddingUtils::test_cosine_similarity_identical_vectors PASSED [ 17%]
+tests/unit/test_deduplicator.py::TestEmbeddingUtils::test_cosine_similarity_orthogonal_vectors PASSED [ 18%]
+tests/unit/test_deduplicator.py::TestEmbeddingUtils::test_cosine_similarity_opposite_vectors PASSED [ 18%]
+tests/unit/test_deduplicator.py::TestEmbeddingUtils::test_text_for_embedding_indicator PASSED [ 19%]
+tests/unit/test_deduplicator.py::TestEmbeddingUtils::test_text_for_embedding_threat_actor PASSED [ 20%]
+tests/unit/test_deduplicator.py::TestEmbeddingUtils::test_text_for_embedding_attack_pattern PASSED [ 20%]
+tests/unit/test_deduplicator.py::TestEmbeddingUtils::test_embed_returns_list_of_floats PASSED [ 21%]
+tests/unit/test_deduplicator.py::TestDeduplicatorWorker::test_new_object_published_as_insert FAILED [ 21%]
+tests/unit/test_deduplicator.py::TestDeduplicatorWorker::test_exact_duplicate_published_as_merge FAILED [ 22%]
+tests/unit/test_deduplicator.py::TestDeduplicatorWorker::test_semantic_duplicate_published_as_merge FAILED [ 22%]
+tests/unit/test_deduplicator.py::TestDeduplicatorWorker::test_embed_failure_still_publishes_insert FAILED [ 23%]
+tests/unit/test_deduplicator.py::TestDeduplicatorWorker::test_malformed_message_does_not_crash FAILED [ 23%]
+tests/unit/test_deduplicator.py::TestDeduplicatorWorker::test_insert_registers_exact_dedup FAILED [ 24%]
+tests/unit/test_llm_normalizer.py::TestParseJsonResponse::test_clean_json_parsed PASSED [ 24%]
+tests/unit/test_llm_normalizer.py::TestParseJsonResponse::test_markdown_fences_stripped PASSED [ 25%]
+tests/unit/test_llm_normalizer.py::TestParseJsonResponse::test_fences_without_language_stripped PASSED [ 25%]
+tests/unit/test_llm_normalizer.py::TestParseJsonResponse::test_leading_prose_ignored PASSED [ 26%]
+tests/unit/test_llm_normalizer.py::TestParseJsonResponse::test_trailing_prose_ignored PASSED [ 26%]
+tests/unit/test_llm_normalizer.py::TestParseJsonResponse::test_completely_invalid_returns_none PASSED [ 27%]
+tests/unit/test_llm_normalizer.py::TestParseJsonResponse::test_empty_string_returns_none PASSED [ 27%]
+tests/unit/test_llm_normalizer.py::TestParseJsonResponse::test_truncated_json_returns_none PASSED [ 28%]
+tests/unit/test_llm_normalizer.py::TestParseJsonResponse::test_nested_objects_parsed PASSED [ 28%]
+tests/unit/test_llm_normalizer.py::TestPromptBuilding::test_source_url_injected PASSED [ 29%]
+tests/unit/test_llm_normalizer.py::TestPromptBuilding::test_published_at_injected PASSED [ 29%]
+tests/unit/test_llm_normalizer.py::TestPromptBuilding::test_chunk_text_injected PASSED [ 30%]
+tests/unit/test_llm_normalizer.py::TestPromptBuilding::test_non_english_note_added PASSED [ 30%]
+tests/unit/test_llm_normalizer.py::TestPromptBuilding::test_english_no_language_note PASSED [ 31%]
+tests/unit/test_llm_normalizer.py::TestPromptBuilding::test_system_prompt_contains_rules PASSED [ 31%]
+tests/unit/test_llm_normalizer.py::TestOllamaClient::test_successful_call_returns_objects FAILED [ 32%]
+tests/unit/test_llm_normalizer.py::TestOllamaClient::test_invalid_json_triggers_retry FAILED [ 32%]
+tests/unit/test_llm_normalizer.py::TestOllamaClient::test_timeout_triggers_fallback FAILED [ 33%]
+tests/unit/test_llm_normalizer.py::TestOllamaClient::test_empty_objects_list_on_no_cti FAILED [ 33%]
+tests/unit/test_llm_normalizer.py::TestLLMNormalizerWorker::test_valid_chunk_publishes_stix_raw FAILED [ 34%]
+tests/unit/test_llm_normalizer.py::TestLLMNormalizerWorker::test_empty_llm_response_does_not_publish FAILED [ 34%]
+tests/unit/test_llm_normalizer.py::TestLLMNormalizerWorker::test_malformed_message_does_not_crash FAILED [ 35%]
+tests/unit/test_models_messages.py::TestRawMessage::test_valid_raw_message PASSED [ 35%]
+tests/unit/test_models_messages.py::TestRawMessage::test_raw_message_is_frozen PASSED [ 36%]
+tests/unit/test_models_messages.py::TestRawMessage::test_metadata_defaults_to_empty_dict PASSED [ 36%]
+tests/unit/test_models_messages.py::TestChunkMessage::test_valid_chunk PASSED [ 37%]
+tests/unit/test_models_messages.py::TestChunkMessage::test_chunk_is_frozen PASSED [ 37%]
+tests/unit/test_models_messages.py::TestStixFinalMessage::test_insert_action PASSED [ 38%]
+tests/unit/test_models_messages.py::TestStixFinalMessage::test_merge_action_with_target PASSED [ 38%]
+tests/unit/test_models_messages.py::TestStixFinalMessage::test_confidence_bounds_enforced PASSED [ 39%]
+tests/unit/test_models_stix.py::TestIndicatorValid::test_valid_ipv4 PASSED [ 40%]
+tests/unit/test_models_stix.py::TestIndicatorValid::test_valid_ipv6 PASSED [ 40%]
+tests/unit/test_models_stix.py::TestIndicatorValid::test_valid_domain PASSED [ 41%]
+tests/unit/test_models_stix.py::TestIndicatorValid::test_valid_url PASSED [ 41%]
+tests/unit/test_models_stix.py::TestIndicatorValid::test_valid_sha256 PASSED [ 42%]
+tests/unit/test_models_stix.py::TestIndicatorValid::test_valid_sha1 PASSED [ 42%]
+tests/unit/test_models_stix.py::TestIndicatorValid::test_valid_md5 PASSED [ 43%]
+tests/unit/test_models_stix.py::TestIndicatorValid::test_valid_email PASSED [ 43%]
+tests/unit/test_models_stix.py::TestIndicatorValid::test_confidence_bounds PASSED [ 44%]
+tests/unit/test_models_stix.py::TestIndicatorValid::test_extension_fields_preserved PASSED [ 44%]
+tests/unit/test_models_stix.py::TestIndicatorInvalidIoC::test_private_ip_10_rejected PASSED [ 45%]
+tests/unit/test_models_stix.py::TestIndicatorInvalidIoC::test_private_ip_192_168_rejected PASSED [ 45%]
+tests/unit/test_models_stix.py::TestIndicatorInvalidIoC::test_private_ip_172_16_rejected PASSED [ 46%]
+tests/unit/test_models_stix.py::TestIndicatorInvalidIoC::test_loopback_rejected PASSED [ 46%]
+tests/unit/test_models_stix.py::TestIndicatorInvalidIoC::test_malformed_ipv4_rejected PASSED [ 47%]
+tests/unit/test_models_stix.py::TestIndicatorInvalidIoC::test_invalid_domain_rejected PASSED [ 47%]
+tests/unit/test_models_stix.py::TestIndicatorInvalidIoC::test_domain_too_short_rejected PASSED [ 48%]
+tests/unit/test_models_stix.py::TestIndicatorInvalidIoC::test_url_no_scheme_rejected PASSED [ 48%]
+tests/unit/test_models_stix.py::TestIndicatorInvalidIoC::test_invalid_hash_length_rejected PASSED [ 49%]
+tests/unit/test_models_stix.py::TestIndicatorInvalidIoC::test_invalid_email_rejected PASSED [ 49%]
+tests/unit/test_models_stix.py::TestIndicatorInvalidIoC::test_empty_pattern_rejected PASSED [ 50%]
+tests/unit/test_models_stix.py::TestIndicatorId::test_wrong_prefix_rejected PASSED [ 50%]
+tests/unit/test_models_stix.py::TestIndicatorId::test_invalid_uuid_suffix_rejected PASSED [ 51%]
+tests/unit/test_models_stix.py::TestThreatActorSTIX::test_valid_threat_actor PASSED [ 51%]
+tests/unit/test_models_stix.py::TestThreatActorSTIX::test_wrong_id_prefix_rejected PASSED [ 52%]
+tests/unit/test_models_stix.py::TestThreatActorSTIX::test_empty_name_rejected PASSED [ 52%]
+tests/unit/test_models_stix.py::TestAttackPatternSTIX::test_valid_attack_pattern PASSED [ 53%]
+tests/unit/test_models_stix.py::TestAttackPatternSTIX::test_valid_mitre_subtechnique PASSED [ 53%]
+tests/unit/test_models_stix.py::TestAttackPatternSTIX::test_invalid_mitre_id_format_rejected PASSED [ 54%]
+tests/unit/test_models_stix.py::TestAttackPatternSTIX::test_mitre_id_optional PASSED [ 54%]
+tests/unit/test_models_stix.py::TestRelationshipSTIX::test_valid_relationship PASSED [ 55%]
+tests/unit/test_models_stix.py::TestRelationshipSTIX::test_all_valid_relationship_types[uses] PASSED [ 55%]
+tests/unit/test_models_stix.py::TestRelationshipSTIX::test_all_valid_relationship_types[indicates] PASSED [ 56%]
+tests/unit/test_models_stix.py::TestRelationshipSTIX::test_all_valid_relationship_types[attributed-to] PASSED [ 56%]
+tests/unit/test_models_stix.py::TestRelationshipSTIX::test_all_valid_relationship_types[targets] PASSED [ 57%]
+tests/unit/test_models_stix.py::TestRelationshipSTIX::test_all_valid_relationship_types[related-to] PASSED [ 57%]
+tests/unit/test_models_stix.py::TestRelationshipSTIX::test_invalid_relationship_type_rejected PASSED [ 58%]
+tests/unit/test_preprocessor.py::TestExtractorHTML::test_html_returns_text PASSED [ 58%]
+tests/unit/test_preprocessor.py::TestExtractorHTML::test_html_empty_returns_empty FAILED [ 59%]
+tests/unit/test_preprocessor.py::TestExtractorHTML::test_unknown_mime_falls_back_to_text_decode FAILED [ 60%]
+tests/unit/test_preprocessor.py::TestExtractorHTML::test_html_strips_scripts PASSED [ 60%]
+tests/unit/test_preprocessor.py::TestExtractorJSON::test_json_extracts_text_fields PASSED [ 61%]
+tests/unit/test_preprocessor.py::TestExtractorJSON::test_json_nested_fields_extracted PASSED [ 61%]
+tests/unit/test_preprocessor.py::TestExtractorJSON::test_invalid_json_returns_empty FAILED [ 62%]
+tests/unit/test_preprocessor.py::TestChunker::test_short_text_returns_empty FAILED [ 62%]
+tests/unit/test_preprocessor.py::TestChunker::test_adequate_text_returns_chunks FAILED [ 63%]
+tests/unit/test_preprocessor.py::TestChunker::test_long_text_split_into_multiple_chunks FAILED [ 63%]
+tests/unit/test_preprocessor.py::TestChunker::test_chunks_contain_original_content FAILED [ 64%]
+tests/unit/test_preprocessor.py::TestChunker::test_empty_text_returns_empty FAILED [ 64%]
+tests/unit/test_preprocessor.py::TestLanguageDetection::test_english_detected PASSED [ 65%]
+tests/unit/test_preprocessor.py::TestLanguageDetection::test_french_detected PASSED [ 65%]
+tests/unit/test_preprocessor.py::TestLanguageDetection::test_short_text_defaults_to_en PASSED [ 66%]
+tests/unit/test_preprocessor.py::TestLanguageDetection::test_empty_text_defaults_to_en PASSED [ 66%]
+tests/unit/test_preprocessor.py::TestPreprocessorWorker::test_valid_html_message_produces_chunks FAILED [ 67%]
+tests/unit/test_preprocessor.py::TestPreprocessorWorker::test_invalid_base64_does_not_crash FAILED [ 67%]
+tests/unit/test_preprocessor.py::TestPreprocessorWorker::test_malformed_message_does_not_crash FAILED [ 68%]
+tests/unit/test_preprocessor.py::TestPreprocessorWorker::test_content_below_min_words_produces_no_chunks FAILED [ 68%]
+tests/unit/test_queue.py::TestPublish::test_publish_calls_xadd FAILED    [ 69%]
+tests/unit/test_queue.py::TestPublish::test_publish_serialises_non_string_values FAILED [ 69%]
+tests/unit/test_queue.py::TestEnsureConsumerGroup::test_creates_group_when_absent FAILED [ 70%]
+tests/unit/test_queue.py::TestEnsureConsumerGroup::test_ignores_busygroup_error PASSED [ 70%]
+tests/unit/test_queue.py::TestEnsureConsumerGroup::test_reraises_non_busygroup_redis_errors PASSED [ 71%]
+tests/unit/test_queue.py::TestConsumeStream::test_handler_called_and_message_acked FAILED [ 71%]
+tests/unit/test_queue.py::TestConsumeStream::test_handler_failure_does_not_ack FAILED [ 72%]
+tests/unit/test_queue.py::TestConsumeStream::test_malformed_json_is_acked_and_skipped FAILED [ 72%]
+tests/unit/test_settings.py::TestSettings::test_database_url_construction PASSED [ 73%]
+tests/unit/test_settings.py::TestSettings::test_database_url_sync_uses_psycopg2 PASSED [ 73%]
+tests/unit/test_settings.py::TestSettings::test_redis_url_construction PASSED [ 74%]
+tests/unit/test_settings.py::TestSettings::test_trusted_categories_parsed PASSED [ 74%]
+tests/unit/test_settings.py::TestSettings::test_known_categories_parsed PASSED [ 75%]
+tests/unit/test_settings.py::TestSettings::test_enrichment_disabled_when_no_api_keys PASSED [ 75%]
+tests/unit/test_settings.py::TestSettings::test_enrichment_enabled_with_vt_key PASSED [ 76%]
+tests/unit/test_settings.py::TestSettings::test_enrichment_enabled_with_shodan_key PASSED [ 76%]
+tests/unit/test_store.py::TestPerimeterMatching::test_extract_ioc_value_ipv4 PASSED [ 77%]
+tests/unit/test_store.py::TestPerimeterMatching::test_extract_ioc_value_domain PASSED [ 77%]
+tests/unit/test_store.py::TestPerimeterMatching::test_extract_ioc_value_hash PASSED [ 78%]
+tests/unit/test_store.py::TestPerimeterMatching::test_extract_ioc_value_invalid PASSED [ 78%]
+tests/unit/test_store.py::TestPerimeterMatching::test_non_indicator_skipped PASSED [ 79%]
+tests/unit/test_store.py::TestPerimeterMatching::test_no_pattern_skipped PASSED [ 80%]
+tests/unit/test_store.py::TestPerimeterMatching::test_match_creates_alert FAILED [ 80%]
+tests/unit/test_store.py::TestPerimeterMatching::test_no_match_no_alert PASSED [ 81%]
+tests/unit/test_store.py::TestEnrichmentTrigger::test_parse_pattern_ipv4 PASSED [ 81%]
+tests/unit/test_store.py::TestEnrichmentTrigger::test_parse_pattern_domain PASSED [ 82%]
+tests/unit/test_store.py::TestEnrichmentTrigger::test_parse_pattern_sha256 PASSED [ 82%]
+tests/unit/test_store.py::TestEnrichmentTrigger::test_parse_pattern_url_not_enriched PASSED [ 83%]
+tests/unit/test_store.py::TestEnrichmentTrigger::test_parse_pattern_email_not_enriched PASSED [ 83%]
+tests/unit/test_store.py::TestEnrichmentTrigger::test_enrichment_triggered_for_ip FAILED [ 84%]
+tests/unit/test_store.py::TestEnrichmentTrigger::test_enrichment_skipped_when_disabled PASSED [ 84%]
+tests/unit/test_store.py::TestEnrichmentTrigger::test_enrichment_skipped_for_non_indicator PASSED [ 85%]
+tests/unit/test_store.py::TestStoreWorker::test_insert_calls_insert_object FAILED [ 85%]
+tests/unit/test_store.py::TestStoreWorker::test_merge_calls_merge_object FAILED [ 86%]
+tests/unit/test_store.py::TestStoreWorker::test_merge_without_target_does_not_crash FAILED [ 86%]
+tests/unit/test_store.py::TestStoreWorker::test_malformed_message_does_not_crash FAILED [ 87%]
+tests/unit/test_store.py::TestStoreWorker::test_db_error_does_not_crash_worker FAILED [ 87%]
+tests/unit/test_validator.py::TestConfidenceScore::test_trusted_fresh_single_source PASSED [ 88%]
+tests/unit/test_validator.py::TestConfidenceScore::test_trusted_fresh_three_sources PASSED [ 88%]
+tests/unit/test_validator.py::TestConfidenceScore::test_known_week_old_two_sources PASSED [ 89%]
+tests/unit/test_validator.py::TestConfidenceScore::test_unknown_old_single_source PASSED [ 89%]
+tests/unit/test_validator.py::TestConfidenceScore::test_known_30_day_boundary PASSED [ 90%]
+tests/unit/test_validator.py::TestConfidenceScore::test_published_at_none_uses_fetched_at PASSED [ 90%]
+tests/unit/test_validator.py::TestConfidenceScore::test_score_capped_at_100 PASSED [ 91%]
+tests/unit/test_validator.py::TestConfidenceScore::test_score_minimum_zero PASSED [ 91%]
+tests/unit/test_validator.py::TestHallucinationCheck::test_correct_url_no_warning PASSED [ 92%]
+tests/unit/test_validator.py::TestHallucinationCheck::test_missing_url_corrected PASSED [ 92%]
+tests/unit/test_validator.py::TestHallucinationCheck::test_hallucinated_url_corrected PASSED [ 93%]
+tests/unit/test_validator.py::TestHallucinationCheck::test_missing_published_at_corrected PASSED [ 93%]
+tests/unit/test_validator.py::TestHallucinationCheck::test_url_trailing_slash_normalized PASSED [ 94%]
+tests/unit/test_validator.py::TestHallucinationCheck::test_original_object_not_mutated PASSED [ 94%]
+tests/unit/test_validator.py::TestStixValidatorDispatch::test_valid_indicator_passes PASSED [ 95%]
+tests/unit/test_validator.py::TestStixValidatorDispatch::test_invalid_indicator_fails PASSED [ 95%]
+tests/unit/test_validator.py::TestStixValidatorDispatch::test_missing_type_fails PASSED [ 96%]
+tests/unit/test_validator.py::TestStixValidatorDispatch::test_unsupported_type_skipped PASSED [ 96%]
+tests/unit/test_validator.py::TestStixValidatorDispatch::test_valid_threat_actor_passes PASSED [ 97%]
+tests/unit/test_validator.py::TestStixValidatorDispatch::test_valid_attack_pattern_passes PASSED [ 97%]
+tests/unit/test_validator.py::TestValidatorWorker::test_valid_object_published_to_stix_valid FAILED [ 98%]
+tests/unit/test_validator.py::TestValidatorWorker::test_invalid_object_published_to_stix_rejected FAILED [ 98%]
+tests/unit/test_validator.py::TestValidatorWorker::test_mixed_objects_routed_correctly FAILED [ 99%]
+tests/unit/test_validator.py::TestValidatorWorker::test_malformed_message_does_not_crash FAILED [100%]
+
+=================================== FAILURES ===================================
+_________________ TestAPIEndpoints.test_login_bad_credentials __________________
+tests/unit/test_api.py:145: in test_login_bad_credentials
+    with TestClient(app) as client:
+         ^^^^^^^^^^^^^^^
+.venv/lib/python3.13/site-packages/starlette/testclient.py:688: in __enter__
+    portal.call(self.wait_startup)
+.venv/lib/python3.13/site-packages/anyio/from_thread.py:334: in call
+    return cast(T_Retval, self.start_task_soon(func, *args).result())
+                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/usr/lib/python3.13/concurrent/futures/_base.py:456: in result
+    return self.__get_result()
+           ^^^^^^^^^^^^^^^^^^^
+/usr/lib/python3.13/concurrent/futures/_base.py:401: in __get_result
+    raise self._exception
+.venv/lib/python3.13/site-packages/anyio/from_thread.py:259: in _call_func
+    retval = await retval_or_awaitable
+             ^^^^^^^^^^^^^^^^^^^^^^^^^
+.venv/lib/python3.13/site-packages/starlette/testclient.py:723: in wait_startup
+    await receive()
+.venv/lib/python3.13/site-packages/starlette/testclient.py:714: in receive
+    self.task.result()
+/usr/lib/python3.13/concurrent/futures/_base.py:449: in result
+    return self.__get_result()
+           ^^^^^^^^^^^^^^^^^^^
+/usr/lib/python3.13/concurrent/futures/_base.py:401: in __get_result
+    raise self._exception
+.venv/lib/python3.13/site-packages/anyio/from_thread.py:259: in _call_func
+    retval = await retval_or_awaitable
+             ^^^^^^^^^^^^^^^^^^^^^^^^^
+.venv/lib/python3.13/site-packages/starlette/testclient.py:704: in lifespan
+    await self.app(scope, self.stream_receive.receive, self.stream_send.send)
+.venv/lib/python3.13/site-packages/fastapi/applications.py:1160: in __call__
+    await super().__call__(scope, receive, send)
+.venv/lib/python3.13/site-packages/starlette/applications.py:107: in __call__
+    await self.middleware_stack(scope, receive, send)
+.venv/lib/python3.13/site-packages/starlette/middleware/errors.py:151: in __call__
+    await self.app(scope, receive, send)
+.venv/lib/python3.13/site-packages/starlette/middleware/cors.py:79: in __call__
+    await self.app(scope, receive, send)
+.venv/lib/python3.13/site-packages/starlette/middleware/exceptions.py:49: in __call__
+    await self.app(scope, receive, send)
+.venv/lib/python3.13/site-packages/fastapi/middleware/asyncexitstack.py:18: in __call__
+    await self.app(scope, receive, send)
+.venv/lib/python3.13/site-packages/starlette/routing.py:716: in __call__
+    await self.middleware_stack(scope, receive, send)
+.venv/lib/python3.13/site-packages/starlette/routing.py:725: in app
+    await self.lifespan(scope, receive, send)
+.venv/lib/python3.13/site-packages/starlette/routing.py:694: in lifespan
+    async with self.lifespan_context(app) as maybe_state:
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^
+/usr/lib/python3.13/contextlib.py:214: in __aenter__
+    return await anext(self.gen)
+           ^^^^^^^^^^^^^^^^^^^^^
+.venv/lib/python3.13/site-packages/fastapi/routing.py:212: in merged_lifespan
+    async with original_context(app) as maybe_original_state:
+               ^^^^^^^^^^^^^^^^^^^^^
+/usr/lib/python3.13/contextlib.py:214: in __aenter__
+    return await anext(self.gen)
+           ^^^^^^^^^^^^^^^^^^^^^
+.venv/lib/python3.13/site-packages/fastapi/routing.py:212: in merged_lifespan
+    async with original_context(app) as maybe_original_state:
+               ^^^^^^^^^^^^^^^^^^^^^
+/usr/lib/python3.13/contextlib.py:214: in __aenter__
+    return await anext(self.gen)
+           ^^^^^^^^^^^^^^^^^^^^^
+.venv/lib/python3.13/site-packages/fastapi/routing.py:212: in merged_lifespan
+    async with original_context(app) as maybe_original_state:
+               ^^^^^^^^^^^^^^^^^^^^^
+/usr/lib/python3.13/contextlib.py:214: in __aenter__
+    return await anext(self.gen)
+           ^^^^^^^^^^^^^^^^^^^^^
+.venv/lib/python3.13/site-packages/fastapi/routing.py:212: in merged_lifespan
+    async with original_context(app) as maybe_original_state:
+               ^^^^^^^^^^^^^^^^^^^^^
+/usr/lib/python3.13/contextlib.py:214: in __aenter__
+    return await anext(self.gen)
+           ^^^^^^^^^^^^^^^^^^^^^
+.venv/lib/python3.13/site-packages/fastapi/routing.py:212: in merged_lifespan
+    async with original_context(app) as maybe_original_state:
+               ^^^^^^^^^^^^^^^^^^^^^
+/usr/lib/python3.13/contextlib.py:214: in __aenter__
+    return await anext(self.gen)
+           ^^^^^^^^^^^^^^^^^^^^^
+modules/api/main.py:22: in lifespan
+    log.info("api_starting")
+.venv/lib/python3.13/site-packages/structlog/_base.py:222: in _proxy_to_logger
+    args, kw = self._process_event(method_name, event, event_kw)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+.venv/lib/python3.13/site-packages/structlog/_base.py:173: in _process_event
+    event_dict = proc(self._logger, method_name, event_dict)
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+.venv/lib/python3.13/site-packages/structlog/stdlib.py:838: in add_logger_name
+    event_dict["logger"] = logger.name
+                           ^^^^^^^^^^^
+E   AttributeError: 'PrintLogger' object has no attribute 'name'
+______ TestRSSConnectorFetch.test_fetch_returns_documents_for_each_entry _______
+tests/unit/test_collector_rss.py:87: in test_fetch_returns_documents_for_each_entry
+    docs = await connector.fetch()
+           ^^^^^^^^^^^^^^^^^^^^^^^
+modules/collector/connectors/rss.py:81: in fetch
+    self._log.info("rss_feed_fetched", url=self.source.url, entry_count=len(entries))
+.venv/lib/python3.13/site-packages/structlog/_base.py:222: in _proxy_to_logger
+    args, kw = self._process_event(method_name, event, event_kw)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+.venv/lib/python3.13/site-packages/structlog/_base.py:173: in _process_event
+    event_dict = proc(self._logger, method_name, event_dict)
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+.venv/lib/python3.13/site-packages/structlog/stdlib.py:838: in add_logger_name
+    event_dict["logger"] = logger.name
+                           ^^^^^^^^^^^
+E   AttributeError: 'PrintLogger' object has no attribute 'name'
+_ TestRSSConnectorFetch.test_fetch_falls_back_to_summary_on_article_fetch_failure _
+tests/unit/test_collector_rss.py:122: in test_fetch_falls_back_to_summary_on_article_fetch_failure
+    docs = await connector.fetch()
+           ^^^^^^^^^^^^^^^^^^^^^^^
+modules/collector/connectors/rss.py:81: in fetch
+    self._log.info("rss_feed_fetched", url=self.source.url, entry_count=len(entries))
+.venv/lib/python3.13/site-packages/structlog/_base.py:222: in _proxy_to_logger
+    args, kw = self._process_event(method_name, event, event_kw)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+.venv/lib/python3.13/site-packages/structlog/_base.py:173: in _process_event
+    event_dict = proc(self._logger, method_name, event_dict)
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+.venv/lib/python3.13/site-packages/structlog/stdlib.py:838: in add_logger_name
+    event_dict["logger"] = logger.name
+                           ^^^^^^^^^^^
+E   AttributeError: 'PrintLogger' object has no attribute 'name'
+_____ TestRSSConnectorFetch.test_fetch_returns_empty_on_feed_fetch_failure _____
+modules/collector/connectors/rss.py:66: in fetch
+    resp = await self._client.get(self.source.url)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/usr/lib/python3.13/unittest/mock.py:2321: in _execute_mock_call
+    raise effect
+E   httpx.HTTPError: timeout
+
+During handling of the above exception, another exception occurred:
+tests/unit/test_collector_rss.py:138: in test_fetch_returns_empty_on_feed_fetch_failure
+    docs = await connector.fetch()
+           ^^^^^^^^^^^^^^^^^^^^^^^
+modules/collector/connectors/rss.py:70: in fetch
+    self._log.error("rss_feed_fetch_failed", url=self.source.url, error=str(exc))
+.venv/lib/python3.13/site-packages/structlog/_base.py:222: in _proxy_to_logger
+    args, kw = self._process_event(method_name, event, event_kw)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+.venv/lib/python3.13/site-packages/structlog/_base.py:173: in _process_event
+    event_dict = proc(self._logger, method_name, event_dict)
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+.venv/lib/python3.13/site-packages/structlog/stdlib.py:838: in add_logger_name
+    event_dict["logger"] = logger.name
+                           ^^^^^^^^^^^
+E   AttributeError: 'PrintLogger' object has no attribute 'name'
+__________ TestRSSConnectorFetch.test_fetch_returns_empty_when_no_url __________
+tests/unit/test_collector_rss.py:146: in test_fetch_returns_empty_when_no_url
+    docs = await connector.fetch()
+           ^^^^^^^^^^^^^^^^^^^^^^^
+modules/collector/connectors/rss.py:60: in fetch
+    self._log.error("rss_no_url")
+.venv/lib/python3.13/site-packages/structlog/_base.py:222: in _proxy_to_logger
+    args, kw = self._process_event(method_name, event, event_kw)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+.venv/lib/python3.13/site-packages/structlog/_base.py:173: in _process_event
+    event_dict = proc(self._logger, method_name, event_dict)
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+.venv/lib/python3.13/site-packages/structlog/stdlib.py:838: in add_logger_name
+    event_dict["logger"] = logger.name
+                           ^^^^^^^^^^^
+E   AttributeError: 'PrintLogger' object has no attribute 'name'
+________________ TestRSSConnectorFetch.test_max_items_respected ________________
+tests/unit/test_collector_rss.py:167: in test_max_items_respected
+    docs = await connector.fetch()
+           ^^^^^^^^^^^^^^^^^^^^^^^
+modules/collector/connectors/rss.py:81: in fetch
+    self._log.info("rss_feed_fetched", url=self.source.url, entry_count=len(entries))
+.venv/lib/python3.13/site-packages/structlog/_base.py:222: in _proxy_to_logger
+    args, kw = self._process_event(method_name, event, event_kw)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+.venv/lib/python3.13/site-packages/structlog/_base.py:173: in _process_event
+    event_dict = proc(self._logger, method_name, event_dict)
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+.venv/lib/python3.13/site-packages/structlog/stdlib.py:838: in add_logger_name
+    event_dict["logger"] = logger.name
+                           ^^^^^^^^^^^
+E   AttributeError: 'PrintLogger' object has no attribute 'name'
+_______________ TestRSSConnectorFetch.test_short_content_skipped _______________
+tests/unit/test_collector_rss.py:191: in test_short_content_skipped
+    docs = await connector.fetch()
+           ^^^^^^^^^^^^^^^^^^^^^^^
+modules/collector/connectors/rss.py:81: in fetch
+    self._log.info("rss_feed_fetched", url=self.source.url, entry_count=len(entries))
+.venv/lib/python3.13/site-packages/structlog/_base.py:222: in _proxy_to_logger
+    args, kw = self._process_event(method_name, event, event_kw)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+.venv/lib/python3.13/site-packages/structlog/_base.py:173: in _process_event
+    event_dict = proc(self._logger, method_name, event_dict)
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+.venv/lib/python3.13/site-packages/structlog/stdlib.py:838: in add_logger_name
+    event_dict["logger"] = logger.name
+                           ^^^^^^^^^^^
+E   AttributeError: 'PrintLogger' object has no attribute 'name'
+_________ TestRSSConnectorFetch.test_published_date_parsed_from_tuple __________
+tests/unit/test_collector_rss.py:217: in test_published_date_parsed_from_tuple
+    docs = await connector.fetch()
+           ^^^^^^^^^^^^^^^^^^^^^^^
+modules/collector/connectors/rss.py:81: in fetch
+    self._log.info("rss_feed_fetched", url=self.source.url, entry_count=len(entries))
+.venv/lib/python3.13/site-packages/structlog/_base.py:222: in _proxy_to_logger
+    args, kw = self._process_event(method_name, event, event_kw)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+.venv/lib/python3.13/site-packages/structlog/_base.py:173: in _process_event
+    event_dict = proc(self._logger, method_name, event_dict)
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+.venv/lib/python3.13/site-packages/structlog/stdlib.py:838: in add_logger_name
+    event_dict["logger"] = logger.name
+                           ^^^^^^^^^^^
+E   AttributeError: 'PrintLogger' object has no attribute 'name'
+__________________ TestExactDedup.test_mark_exact_calls_setex __________________
+tests/unit/test_deduplicator.py:46: in test_mark_exact_calls_setex
+    await mark_exact("[ipv4-addr:value = '198.51.100.1']", "indicator--abc")
+modules/deduplicator/exact.py:58: in mark_exact
+    log.debug("dedup_exact_marked", stix_id=stix_id, hash=key[-16:])
+.venv/lib/python3.13/site-packages/structlog/_base.py:222: in _proxy_to_logger
+    args, kw = self._process_event(method_name, event, event_kw)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+.venv/lib/python3.13/site-packages/structlog/_base.py:173: in _process_event
+    event_dict = proc(self._logger, method_name, event_dict)
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+.venv/lib/python3.13/site-packages/structlog/stdlib.py:838: in add_logger_name
+    event_dict["logger"] = logger.name
+                           ^^^^^^^^^^^
+E   AttributeError: 'PrintLogger' object has no attribute 'name'
+__________ TestDeduplicatorWorker.test_new_object_published_as_insert __________
+tests/unit/test_deduplicator.py:198: in test_new_object_published_as_insert
+    await handle_stix_valid_message(payload)
+modules/deduplicator/worker.py:61: in handle_stix_valid_message
+    worker_log.info("deduplicator_received")
+.venv/lib/python3.13/site-packages/structlog/_base.py:222: in _proxy_to_logger
+    args, kw = self._process_event(method_name, event, event_kw)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+.venv/lib/python3.13/site-packages/structlog/_base.py:173: in _process_event
+    event_dict = proc(self._logger, method_name, event_dict)
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+.venv/lib/python3.13/site-packages/structlog/stdlib.py:838: in add_logger_name
+    event_dict["logger"] = logger.name
+                           ^^^^^^^^^^^
+E   AttributeError: 'PrintLogger' object has no attribute 'name'
+________ TestDeduplicatorWorker.test_exact_duplicate_published_as_merge ________
+tests/unit/test_deduplicator.py:221: in test_exact_duplicate_published_as_merge
+    await handle_stix_valid_message(payload)
+modules/deduplicator/worker.py:61: in handle_stix_valid_message
+    worker_log.info("deduplicator_received")
+.venv/lib/python3.13/site-packages/structlog/_base.py:222: in _proxy_to_logger
+    args, kw = self._process_event(method_name, event, event_kw)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+.venv/lib/python3.13/site-packages/structlog/_base.py:173: in _process_event
+    event_dict = proc(self._logger, method_name, event_dict)
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+.venv/lib/python3.13/site-packages/structlog/stdlib.py:838: in add_logger_name
+    event_dict["logger"] = logger.name
+                           ^^^^^^^^^^^
+E   AttributeError: 'PrintLogger' object has no attribute 'name'
+______ TestDeduplicatorWorker.test_semantic_duplicate_published_as_merge _______
+tests/unit/test_deduplicator.py:245: in test_semantic_duplicate_published_as_merge
+    await handle_stix_valid_message(payload)
+modules/deduplicator/worker.py:61: in handle_stix_valid_message
+    worker_log.info("deduplicator_received")
+.venv/lib/python3.13/site-packages/structlog/_base.py:222: in _proxy_to_logger
+    args, kw = self._process_event(method_name, event, event_kw)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+.venv/lib/python3.13/site-packages/structlog/_base.py:173: in _process_event
+    event_dict = proc(self._logger, method_name, event_dict)
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+.venv/lib/python3.13/site-packages/structlog/stdlib.py:838: in add_logger_name
+    event_dict["logger"] = logger.name
+                           ^^^^^^^^^^^
+E   AttributeError: 'PrintLogger' object has no attribute 'name'
+_______ TestDeduplicatorWorker.test_embed_failure_still_publishes_insert _______
+tests/unit/test_deduplicator.py:267: in test_embed_failure_still_publishes_insert
+    await handle_stix_valid_message(payload)
+modules/deduplicator/worker.py:61: in handle_stix_valid_message
+    worker_log.info("deduplicator_received")
+.venv/lib/python3.13/site-packages/structlog/_base.py:222: in _proxy_to_logger
+    args, kw = self._process_event(method_name, event, event_kw)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+.venv/lib/python3.13/site-packages/structlog/_base.py:173: in _process_event
+    event_dict = proc(self._logger, method_name, event_dict)
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+.venv/lib/python3.13/site-packages/structlog/stdlib.py:838: in add_logger_name
+    event_dict["logger"] = logger.name
+                           ^^^^^^^^^^^
+E   AttributeError: 'PrintLogger' object has no attribute 'name'
+_________ TestDeduplicatorWorker.test_malformed_message_does_not_crash _________
+modules/deduplicator/worker.py:46: in handle_stix_valid_message
+    msg = StixValidMessage.model_validate(payload)
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E   pydantic_core._pydantic_core.ValidationError: 10 validation errors for StixValidMessage
+E   source_id
+E     Field required [type=missing, input_value={'bad': 'payload'}, input_type=dict]
+E       For further information visit https://errors.pydantic.dev/2.12/v/missing
+E   source_url
+E     Field required [type=missing, input_value={'bad': 'payload'}, input_type=dict]
+E       For further information visit https://errors.pydantic.dev/2.12/v/missing
+E   source_type
+E     Field required [type=missing, input_value={'bad': 'payload'}, input_type=dict]
+E       For further information visit https://errors.pydantic.dev/2.12/v/missing
+E   source_category
+E     Field required [type=missing, input_value={'bad': 'payload'}, input_type=dict]
+E       For further information visit https://errors.pydantic.dev/2.12/v/missing
+E   tlp_level
+E     Field required [type=missing, input_value={'bad': 'payload'}, input_type=dict]
+E       For further information visit https://errors.pydantic.dev/2.12/v/missing
+E   fetched_at
+E     Field required [type=missing, input_value={'bad': 'payload'}, input_type=dict]
+E       For further information visit https://errors.pydantic.dev/2.12/v/missing
+E   llm_model
+E     Field required [type=missing, input_value={'bad': 'payload'}, input_type=dict]
+E       For further information visit https://errors.pydantic.dev/2.12/v/missing
+E   llm_duration_ms
+E     Field required [type=missing, input_value={'bad': 'payload'}, input_type=dict]
+E       For further information visit https://errors.pydantic.dev/2.12/v/missing
+E   confidence
+E     Field required [type=missing, input_value={'bad': 'payload'}, input_type=dict]
+E       For further information visit https://errors.pydantic.dev/2.12/v/missing
+E   stix_object
+E     Field required [type=missing, input_value={'bad': 'payload'}, input_type=dict]
+E       For further information visit https://errors.pydantic.dev/2.12/v/missing
+
+During handling of the above exception, another exception occurred:
+tests/unit/test_deduplicator.py:275: in test_malformed_message_does_not_crash
+    await handle_stix_valid_message({"bad": "payload"})
+modules/deduplicator/worker.py:48: in handle_stix_valid_message
+    log.error("deduplicator_invalid_message", error=str(exc))
+.venv/lib/python3.13/site-packages/structlog/_base.py:222: in _proxy_to_logger
+    args, kw = self._process_event(method_name, event, event_kw)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+.venv/lib/python3.13/site-packages/structlog/_base.py:173: in _process_event
+    event_dict = proc(self._logger, method_name, event_dict)
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+.venv/lib/python3.13/site-packages/structlog/stdlib.py:838: in add_logger_name
+    event_dict["logger"] = logger.name
+                           ^^^^^^^^^^^
+E   AttributeError: 'PrintLogger' object has no attribute 'name'
+___________ TestDeduplicatorWorker.test_insert_registers_exact_dedup ___________
+tests/unit/test_deduplicator.py:292: in test_insert_registers_exact_dedup
+    await handle_stix_valid_message(payload)
+modules/deduplicator/worker.py:61: in handle_stix_valid_message
+    worker_log.info("deduplicator_received")
+.venv/lib/python3.13/site-packages/structlog/_base.py:222: in _proxy_to_logger
+    args, kw = self._process_event(method_name, event, event_kw)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+.venv/lib/python3.13/site-packages/structlog/_base.py:173: in _process_event
+    event_dict = proc(self._logger, method_name, event_dict)
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+.venv/lib/python3.13/site-packages/structlog/stdlib.py:838: in add_logger_name
+    event_dict["logger"] = logger.name
+                           ^^^^^^^^^^^
+E   AttributeError: 'PrintLogger' object has no attribute 'name'
+____________ TestOllamaClient.test_successful_call_returns_objects _____________
+tests/unit/test_llm_normalizer.py:172: in test_successful_call_returns_objects
+    objects, model, duration_ms = await client.extract_stix(
+modules/llm_normalizer/client.py:71: in extract_stix
+    result, model, duration_ms = await self._call_with_retry(
+modules/llm_normalizer/client.py:125: in _call_with_retry
+    log.info(
+.venv/lib/python3.13/site-packages/structlog/_base.py:222: in _proxy_to_logger
+    args, kw = self._process_event(method_name, event, event_kw)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+.venv/lib/python3.13/site-packages/structlog/_base.py:173: in _process_event
+    event_dict = proc(self._logger, method_name, event_dict)
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+.venv/lib/python3.13/site-packages/structlog/stdlib.py:838: in add_logger_name
+    event_dict["logger"] = logger.name
+                           ^^^^^^^^^^^
+E   AttributeError: 'PrintLogger' object has no attribute 'name'
+______________ TestOllamaClient.test_invalid_json_triggers_retry _______________
+tests/unit/test_llm_normalizer.py:209: in test_invalid_json_triggers_retry
+    objects, model, _ = await client.extract_stix("sys", "user")
+                        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+modules/llm_normalizer/client.py:71: in extract_stix
+    result, model, duration_ms = await self._call_with_retry(
+modules/llm_normalizer/client.py:135: in _call_with_retry
+    log.warning(
+.venv/lib/python3.13/site-packages/structlog/_base.py:222: in _proxy_to_logger
+    args, kw = self._process_event(method_name, event, event_kw)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+.venv/lib/python3.13/site-packages/structlog/_base.py:173: in _process_event
+    event_dict = proc(self._logger, method_name, event_dict)
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+.venv/lib/python3.13/site-packages/structlog/stdlib.py:838: in add_logger_name
+    event_dict["logger"] = logger.name
+                           ^^^^^^^^^^^
+E   AttributeError: 'PrintLogger' object has no attribute 'name'
+_______________ TestOllamaClient.test_timeout_triggers_fallback ________________
+tests/unit/test_llm_normalizer.py:236: in fake_post
+    raise httpx.TimeoutException("timeout")
+E   httpx.TimeoutException: timeout
+
+During handling of the above exception, another exception occurred:
+tests/unit/test_llm_normalizer.py:245: in test_timeout_triggers_fallback
+    objects, model, _ = await client.extract_stix("sys", "user")
+                        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+modules/llm_normalizer/client.py:71: in extract_stix
+    result, model, duration_ms = await self._call_with_retry(
+modules/llm_normalizer/client.py:112: in _call_with_retry
+    raw = await self._call_ollama(model, system_prompt, current_user_prompt)
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+modules/llm_normalizer/client.py:178: in _call_ollama
+    log.warning("llm_timeout", model=model, error=str(exc))
+.venv/lib/python3.13/site-packages/structlog/_base.py:222: in _proxy_to_logger
+    args, kw = self._process_event(method_name, event, event_kw)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+.venv/lib/python3.13/site-packages/structlog/_base.py:173: in _process_event
+    event_dict = proc(self._logger, method_name, event_dict)
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+.venv/lib/python3.13/site-packages/structlog/stdlib.py:838: in add_logger_name
+    event_dict["logger"] = logger.name
+                           ^^^^^^^^^^^
+E   AttributeError: 'PrintLogger' object has no attribute 'name'
+______________ TestOllamaClient.test_empty_objects_list_on_no_cti ______________
+tests/unit/test_llm_normalizer.py:268: in test_empty_objects_list_on_no_cti
+    objects, _, _ = await client.extract_stix("sys", "user")
+                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+modules/llm_normalizer/client.py:71: in extract_stix
+    result, model, duration_ms = await self._call_with_retry(
+modules/llm_normalizer/client.py:125: in _call_with_retry
+    log.info(
+.venv/lib/python3.13/site-packages/structlog/_base.py:222: in _proxy_to_logger
+    args, kw = self._process_event(method_name, event, event_kw)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+.venv/lib/python3.13/site-packages/structlog/_base.py:173: in _process_event
+    event_dict = proc(self._logger, method_name, event_dict)
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+.venv/lib/python3.13/site-packages/structlog/stdlib.py:838: in add_logger_name
+    event_dict["logger"] = logger.name
+                           ^^^^^^^^^^^
+E   AttributeError: 'PrintLogger' object has no attribute 'name'
+_________ TestLLMNormalizerWorker.test_valid_chunk_publishes_stix_raw __________
+tests/unit/test_llm_normalizer.py:312: in test_valid_chunk_publishes_stix_raw
+    await handle_chunk_message(payload)
+modules/llm_normalizer/worker.py:50: in handle_chunk_message
+    worker_log.info("llm_normalizer_received")
+.venv/lib/python3.13/site-packages/structlog/_base.py:222: in _proxy_to_logger
+    args, kw = self._process_event(method_name, event, event_kw)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+.venv/lib/python3.13/site-packages/structlog/_base.py:173: in _process_event
+    event_dict = proc(self._logger, method_name, event_dict)
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+.venv/lib/python3.13/site-packages/structlog/stdlib.py:838: in add_logger_name
+    event_dict["logger"] = logger.name
+                           ^^^^^^^^^^^
+E   AttributeError: 'PrintLogger' object has no attribute 'name'
+_______ TestLLMNormalizerWorker.test_empty_llm_response_does_not_publish _______
+tests/unit/test_llm_normalizer.py:345: in test_empty_llm_response_does_not_publish
+    await handle_chunk_message(payload)
+modules/llm_normalizer/worker.py:50: in handle_chunk_message
+    worker_log.info("llm_normalizer_received")
+.venv/lib/python3.13/site-packages/structlog/_base.py:222: in _proxy_to_logger
+    args, kw = self._process_event(method_name, event, event_kw)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+.venv/lib/python3.13/site-packages/structlog/_base.py:173: in _process_event
+    event_dict = proc(self._logger, method_name, event_dict)
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+.venv/lib/python3.13/site-packages/structlog/stdlib.py:838: in add_logger_name
+    event_dict["logger"] = logger.name
+                           ^^^^^^^^^^^
+E   AttributeError: 'PrintLogger' object has no attribute 'name'
+________ TestLLMNormalizerWorker.test_malformed_message_does_not_crash _________
+modules/llm_normalizer/worker.py:41: in handle_chunk_message
+    msg = ChunkMessage.model_validate(payload)
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E   pydantic_core._pydantic_core.ValidationError: 8 validation errors for ChunkMessage
+E   source_id
+E     Field required [type=missing, input_value={'invalid': 'data'}, input_type=dict]
+E       For further information visit https://errors.pydantic.dev/2.12/v/missing
+E   source_url
+E     Field required [type=missing, input_value={'invalid': 'data'}, input_type=dict]
+E       For further information visit https://errors.pydantic.dev/2.12/v/missing
+E   source_type
+E     Field required [type=missing, input_value={'invalid': 'data'}, input_type=dict]
+E       For further information visit https://errors.pydantic.dev/2.12/v/missing
+E   chunk_index
+E     Field required [type=missing, input_value={'invalid': 'data'}, input_type=dict]
+E       For further information visit https://errors.pydantic.dev/2.12/v/missing
+E   chunk_total
+E     Field required [type=missing, input_value={'invalid': 'data'}, input_type=dict]
+E       For further information visit https://errors.pydantic.dev/2.12/v/missing
+E   chunk_text
+E     Field required [type=missing, input_value={'invalid': 'data'}, input_type=dict]
+E       For further information visit https://errors.pydantic.dev/2.12/v/missing
+E   tlp_level
+E     Field required [type=missing, input_value={'invalid': 'data'}, input_type=dict]
+E       For further information visit https://errors.pydantic.dev/2.12/v/missing
+E   fetched_at
+E     Field required [type=missing, input_value={'invalid': 'data'}, input_type=dict]
+E       For further information visit https://errors.pydantic.dev/2.12/v/missing
+
+During handling of the above exception, another exception occurred:
+tests/unit/test_llm_normalizer.py:352: in test_malformed_message_does_not_crash
+    await handle_chunk_message({"invalid": "data"})
+modules/llm_normalizer/worker.py:43: in handle_chunk_message
+    log.error("llm_normalizer_invalid_message", error=str(exc))
+.venv/lib/python3.13/site-packages/structlog/_base.py:222: in _proxy_to_logger
+    args, kw = self._process_event(method_name, event, event_kw)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+.venv/lib/python3.13/site-packages/structlog/_base.py:173: in _process_event
+    event_dict = proc(self._logger, method_name, event_dict)
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+.venv/lib/python3.13/site-packages/structlog/stdlib.py:838: in add_logger_name
+    event_dict["logger"] = logger.name
+                           ^^^^^^^^^^^
+E   AttributeError: 'PrintLogger' object has no attribute 'name'
+_______________ TestExtractorHTML.test_html_empty_returns_empty ________________
+tests/unit/test_preprocessor.py:36: in test_html_empty_returns_empty
+    text = extract_text(b"<html><body></body></html>", "text/html")
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+modules/preprocessor/extractor.py:32: in extract_text
+    return _extract_html(content_bytes)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+modules/preprocessor/extractor.py:64: in _extract_html
+    log.debug("extractor_html_trafilatura_fallback")
+.venv/lib/python3.13/site-packages/structlog/_base.py:222: in _proxy_to_logger
+    args, kw = self._process_event(method_name, event, event_kw)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+.venv/lib/python3.13/site-packages/structlog/_base.py:173: in _process_event
+    event_dict = proc(self._logger, method_name, event_dict)
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+.venv/lib/python3.13/site-packages/structlog/stdlib.py:838: in add_logger_name
+    event_dict["logger"] = logger.name
+                           ^^^^^^^^^^^
+E   AttributeError: 'PrintLogger' object has no attribute 'name'
+------------------------------ Captured log call -------------------------------
+WARNING  trafilatura.core:core.py:344 discarding data: None
+________ TestExtractorHTML.test_unknown_mime_falls_back_to_text_decode _________
+tests/unit/test_preprocessor.py:43: in test_unknown_mime_falls_back_to_text_decode
+    text = extract_text(content, "application/octet-stream")
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+modules/preprocessor/extractor.py:40: in extract_text
+    log.warning("extractor_unknown_mime", mime=mime)
+.venv/lib/python3.13/site-packages/structlog/_base.py:222: in _proxy_to_logger
+    args, kw = self._process_event(method_name, event, event_kw)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+.venv/lib/python3.13/site-packages/structlog/_base.py:173: in _process_event
+    event_dict = proc(self._logger, method_name, event_dict)
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+.venv/lib/python3.13/site-packages/structlog/stdlib.py:838: in add_logger_name
+    event_dict["logger"] = logger.name
+                           ^^^^^^^^^^^
+E   AttributeError: 'PrintLogger' object has no attribute 'name'
+______________ TestExtractorJSON.test_invalid_json_returns_empty _______________
+modules/preprocessor/extractor.py:163: in _extract_json
+    data = json.loads(_decode_text(content_bytes))
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/usr/lib/python3.13/json/__init__.py:346: in loads
+    return _default_decoder.decode(s)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^
+/usr/lib/python3.13/json/decoder.py:345: in decode
+    obj, end = self.raw_decode(s, idx=_w(s, 0).end())
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/usr/lib/python3.13/json/decoder.py:363: in raw_decode
+    raise JSONDecodeError("Expecting value", s, err.value) from None
+E   json.decoder.JSONDecodeError: Expecting value: line 1 column 1 (char 0)
+
+During handling of the above exception, another exception occurred:
+tests/unit/test_preprocessor.py:84: in test_invalid_json_returns_empty
+    text = extract_text(b"not valid json {{{", "application/json")
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+modules/preprocessor/extractor.py:36: in extract_text
+    return _extract_json(content_bytes)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+modules/preprocessor/extractor.py:165: in _extract_json
+    log.warning("extractor_json_parse_failed", error=str(exc))
+.venv/lib/python3.13/site-packages/structlog/_base.py:222: in _proxy_to_logger
+    args, kw = self._process_event(method_name, event, event_kw)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+.venv/lib/python3.13/site-packages/structlog/_base.py:173: in _process_event
+    event_dict = proc(self._logger, method_name, event_dict)
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+.venv/lib/python3.13/site-packages/structlog/stdlib.py:838: in add_logger_name
+    event_dict["logger"] = logger.name
+                           ^^^^^^^^^^^
+E   AttributeError: 'PrintLogger' object has no attribute 'name'
+__________________ TestChunker.test_short_text_returns_empty ___________________
+tests/unit/test_preprocessor.py:96: in test_short_text_returns_empty
+    chunks = chunk_text(text)
+             ^^^^^^^^^^^^^^^^
+modules/preprocessor/chunker.py:35: in chunk_text
+    log.debug("chunker_text_too_short", word_count=word_count, minimum=settings.min_content_words)
+.venv/lib/python3.13/site-packages/structlog/_base.py:222: in _proxy_to_logger
+    args, kw = self._process_event(method_name, event, event_kw)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+.venv/lib/python3.13/site-packages/structlog/_base.py:173: in _process_event
+    event_dict = proc(self._logger, method_name, event_dict)
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+.venv/lib/python3.13/site-packages/structlog/stdlib.py:838: in add_logger_name
+    event_dict["logger"] = logger.name
+                           ^^^^^^^^^^^
+E   AttributeError: 'PrintLogger' object has no attribute 'name'
+________________ TestChunker.test_adequate_text_returns_chunks _________________
+tests/unit/test_preprocessor.py:103: in test_adequate_text_returns_chunks
+    chunks = chunk_text(text)
+             ^^^^^^^^^^^^^^^^
+modules/preprocessor/chunker.py:50: in chunk_text
+    log.debug(
+.venv/lib/python3.13/site-packages/structlog/_base.py:222: in _proxy_to_logger
+    args, kw = self._process_event(method_name, event, event_kw)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+.venv/lib/python3.13/site-packages/structlog/_base.py:173: in _process_event
+    event_dict = proc(self._logger, method_name, event_dict)
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+.venv/lib/python3.13/site-packages/structlog/stdlib.py:838: in add_logger_name
+    event_dict["logger"] = logger.name
+                           ^^^^^^^^^^^
+E   AttributeError: 'PrintLogger' object has no attribute 'name'
+____________ TestChunker.test_long_text_split_into_multiple_chunks _____________
+tests/unit/test_preprocessor.py:111: in test_long_text_split_into_multiple_chunks
+    chunks = chunk_text(text)
+             ^^^^^^^^^^^^^^^^
+modules/preprocessor/chunker.py:50: in chunk_text
+    log.debug(
+.venv/lib/python3.13/site-packages/structlog/_base.py:222: in _proxy_to_logger
+    args, kw = self._process_event(method_name, event, event_kw)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+.venv/lib/python3.13/site-packages/structlog/_base.py:173: in _process_event
+    event_dict = proc(self._logger, method_name, event_dict)
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+.venv/lib/python3.13/site-packages/structlog/stdlib.py:838: in add_logger_name
+    event_dict["logger"] = logger.name
+                           ^^^^^^^^^^^
+E   AttributeError: 'PrintLogger' object has no attribute 'name'
+_______________ TestChunker.test_chunks_contain_original_content _______________
+tests/unit/test_preprocessor.py:121: in test_chunks_contain_original_content
+    chunks = chunk_text(text)
+             ^^^^^^^^^^^^^^^^
+modules/preprocessor/chunker.py:50: in chunk_text
+    log.debug(
+.venv/lib/python3.13/site-packages/structlog/_base.py:222: in _proxy_to_logger
+    args, kw = self._process_event(method_name, event, event_kw)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+.venv/lib/python3.13/site-packages/structlog/_base.py:173: in _process_event
+    event_dict = proc(self._logger, method_name, event_dict)
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+.venv/lib/python3.13/site-packages/structlog/stdlib.py:838: in add_logger_name
+    event_dict["logger"] = logger.name
+                           ^^^^^^^^^^^
+E   AttributeError: 'PrintLogger' object has no attribute 'name'
+__________________ TestChunker.test_empty_text_returns_empty ___________________
+tests/unit/test_preprocessor.py:127: in test_empty_text_returns_empty
+    assert chunk_text("") == []
+           ^^^^^^^^^^^^^^
+modules/preprocessor/chunker.py:35: in chunk_text
+    log.debug("chunker_text_too_short", word_count=word_count, minimum=settings.min_content_words)
+.venv/lib/python3.13/site-packages/structlog/_base.py:222: in _proxy_to_logger
+    args, kw = self._process_event(method_name, event, event_kw)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+.venv/lib/python3.13/site-packages/structlog/_base.py:173: in _process_event
+    event_dict = proc(self._logger, method_name, event_dict)
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+.venv/lib/python3.13/site-packages/structlog/stdlib.py:838: in add_logger_name
+    event_dict["logger"] = logger.name
+                           ^^^^^^^^^^^
+E   AttributeError: 'PrintLogger' object has no attribute 'name'
+________ TestPreprocessorWorker.test_valid_html_message_produces_chunks ________
+tests/unit/test_preprocessor.py:216: in test_valid_html_message_produces_chunks
+    await handle_raw_message(payload)
+modules/preprocessor/worker.py:46: in handle_raw_message
+    worker_log.info("preprocessor_received")
+.venv/lib/python3.13/site-packages/structlog/_base.py:222: in _proxy_to_logger
+    args, kw = self._process_event(method_name, event, event_kw)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+.venv/lib/python3.13/site-packages/structlog/_base.py:173: in _process_event
+    event_dict = proc(self._logger, method_name, event_dict)
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+.venv/lib/python3.13/site-packages/structlog/stdlib.py:838: in add_logger_name
+    event_dict["logger"] = logger.name
+                           ^^^^^^^^^^^
+E   AttributeError: 'PrintLogger' object has no attribute 'name'
+__________ TestPreprocessorWorker.test_invalid_base64_does_not_crash ___________
+tests/unit/test_preprocessor.py:246: in test_invalid_base64_does_not_crash
+    await handle_raw_message(payload)
+modules/preprocessor/worker.py:46: in handle_raw_message
+    worker_log.info("preprocessor_received")
+.venv/lib/python3.13/site-packages/structlog/_base.py:222: in _proxy_to_logger
+    args, kw = self._process_event(method_name, event, event_kw)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+.venv/lib/python3.13/site-packages/structlog/_base.py:173: in _process_event
+    event_dict = proc(self._logger, method_name, event_dict)
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+.venv/lib/python3.13/site-packages/structlog/stdlib.py:838: in add_logger_name
+    event_dict["logger"] = logger.name
+                           ^^^^^^^^^^^
+E   AttributeError: 'PrintLogger' object has no attribute 'name'
+_________ TestPreprocessorWorker.test_malformed_message_does_not_crash _________
+modules/preprocessor/worker.py:40: in handle_raw_message
+    msg = RawMessage.model_validate(payload)
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E   pydantic_core._pydantic_core.ValidationError: 7 validation errors for RawMessage
+E   source_id
+E     Field required [type=missing, input_value={'invalid': 'payload'}, input_type=dict]
+E       For further information visit https://errors.pydantic.dev/2.12/v/missing
+E   source_url
+E     Field required [type=missing, input_value={'invalid': 'payload'}, input_type=dict]
+E       For further information visit https://errors.pydantic.dev/2.12/v/missing
+E   source_type
+E     Field required [type=missing, input_value={'invalid': 'payload'}, input_type=dict]
+E       For further information visit https://errors.pydantic.dev/2.12/v/missing
+E   content_b64
+E     Field required [type=missing, input_value={'invalid': 'payload'}, input_type=dict]
+E       For further information visit https://errors.pydantic.dev/2.12/v/missing
+E   content_type
+E     Field required [type=missing, input_value={'invalid': 'payload'}, input_type=dict]
+E       For further information visit https://errors.pydantic.dev/2.12/v/missing
+E   fetched_at
+E     Field required [type=missing, input_value={'invalid': 'payload'}, input_type=dict]
+E       For further information visit https://errors.pydantic.dev/2.12/v/missing
+E   tlp_level
+E     Field required [type=missing, input_value={'invalid': 'payload'}, input_type=dict]
+E       For further information visit https://errors.pydantic.dev/2.12/v/missing
+
+During handling of the above exception, another exception occurred:
+tests/unit/test_preprocessor.py:251: in test_malformed_message_does_not_crash
+    await handle_raw_message({"invalid": "payload"})
+modules/preprocessor/worker.py:42: in handle_raw_message
+    log.error("preprocessor_invalid_message", error=str(exc))
+.venv/lib/python3.13/site-packages/structlog/_base.py:222: in _proxy_to_logger
+    args, kw = self._process_event(method_name, event, event_kw)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+.venv/lib/python3.13/site-packages/structlog/_base.py:173: in _process_event
+    event_dict = proc(self._logger, method_name, event_dict)
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+.venv/lib/python3.13/site-packages/structlog/stdlib.py:838: in add_logger_name
+    event_dict["logger"] = logger.name
+                           ^^^^^^^^^^^
+E   AttributeError: 'PrintLogger' object has no attribute 'name'
+____ TestPreprocessorWorker.test_content_below_min_words_produces_no_chunks ____
+tests/unit/test_preprocessor.py:280: in test_content_below_min_words_produces_no_chunks
+    await handle_raw_message(payload)
+modules/preprocessor/worker.py:46: in handle_raw_message
+    worker_log.info("preprocessor_received")
+.venv/lib/python3.13/site-packages/structlog/_base.py:222: in _proxy_to_logger
+    args, kw = self._process_event(method_name, event, event_kw)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+.venv/lib/python3.13/site-packages/structlog/_base.py:173: in _process_event
+    event_dict = proc(self._logger, method_name, event_dict)
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+.venv/lib/python3.13/site-packages/structlog/stdlib.py:838: in add_logger_name
+    event_dict["logger"] = logger.name
+                           ^^^^^^^^^^^
+E   AttributeError: 'PrintLogger' object has no attribute 'name'
+_____________________ TestPublish.test_publish_calls_xadd ______________________
+tests/unit/test_queue.py:30: in test_publish_calls_xadd
+    msg_id = await publish(STREAM_RAW, {"key": "value", "number": 42})
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+shared/queue/client.py:77: in publish
+    log.debug("stream_published", stream=stream, msg_id=msg_id)
+.venv/lib/python3.13/site-packages/structlog/_base.py:222: in _proxy_to_logger
+    args, kw = self._process_event(method_name, event, event_kw)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+.venv/lib/python3.13/site-packages/structlog/_base.py:173: in _process_event
+    event_dict = proc(self._logger, method_name, event_dict)
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+.venv/lib/python3.13/site-packages/structlog/stdlib.py:838: in add_logger_name
+    event_dict["logger"] = logger.name
+                           ^^^^^^^^^^^
+E   AttributeError: 'PrintLogger' object has no attribute 'name'
+____________ TestPublish.test_publish_serialises_non_string_values _____________
+tests/unit/test_queue.py:51: in test_publish_serialises_non_string_values
+    msg_id = await publish(STREAM_RAW, {
+shared/queue/client.py:77: in publish
+    log.debug("stream_published", stream=stream, msg_id=msg_id)
+.venv/lib/python3.13/site-packages/structlog/_base.py:222: in _proxy_to_logger
+    args, kw = self._process_event(method_name, event, event_kw)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+.venv/lib/python3.13/site-packages/structlog/_base.py:173: in _process_event
+    event_dict = proc(self._logger, method_name, event_dict)
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+.venv/lib/python3.13/site-packages/structlog/stdlib.py:838: in add_logger_name
+    event_dict["logger"] = logger.name
+                           ^^^^^^^^^^^
+E   AttributeError: 'PrintLogger' object has no attribute 'name'
+____________ TestEnsureConsumerGroup.test_creates_group_when_absent ____________
+tests/unit/test_queue.py:69: in test_creates_group_when_absent
+    await ensure_consumer_group(STREAM_RAW, "preprocessor-group")
+shared/queue/client.py:91: in ensure_consumer_group
+    log.info("consumer_group_created", stream=stream, group=group)
+.venv/lib/python3.13/site-packages/structlog/_base.py:222: in _proxy_to_logger
+    args, kw = self._process_event(method_name, event, event_kw)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+.venv/lib/python3.13/site-packages/structlog/_base.py:173: in _process_event
+    event_dict = proc(self._logger, method_name, event_dict)
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+.venv/lib/python3.13/site-packages/structlog/stdlib.py:838: in add_logger_name
+    event_dict["logger"] = logger.name
+                           ^^^^^^^^^^^
+E   AttributeError: 'PrintLogger' object has no attribute 'name'
+___________ TestConsumeStream.test_handler_called_and_message_acked ____________
+tests/unit/test_queue.py:132: in test_handler_called_and_message_acked
+    await consume_stream(STREAM_RAW, "group", "consumer-1", handler)
+shared/queue/client.py:127: in consume_stream
+    log.info("consumer_started", stream=stream, group=group, consumer=consumer)
+.venv/lib/python3.13/site-packages/structlog/_base.py:222: in _proxy_to_logger
+    args, kw = self._process_event(method_name, event, event_kw)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+.venv/lib/python3.13/site-packages/structlog/_base.py:173: in _process_event
+    event_dict = proc(self._logger, method_name, event_dict)
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+.venv/lib/python3.13/site-packages/structlog/stdlib.py:838: in add_logger_name
+    event_dict["logger"] = logger.name
+                           ^^^^^^^^^^^
+E   AttributeError: 'PrintLogger' object has no attribute 'name'
+_____________ TestConsumeStream.test_handler_failure_does_not_ack ______________
+tests/unit/test_queue.py:165: in test_handler_failure_does_not_ack
+    await consume_stream(STREAM_RAW, "group", "consumer-1", failing_handler)
+shared/queue/client.py:127: in consume_stream
+    log.info("consumer_started", stream=stream, group=group, consumer=consumer)
+.venv/lib/python3.13/site-packages/structlog/_base.py:222: in _proxy_to_logger
+    args, kw = self._process_event(method_name, event, event_kw)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+.venv/lib/python3.13/site-packages/structlog/_base.py:173: in _process_event
+    event_dict = proc(self._logger, method_name, event_dict)
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+.venv/lib/python3.13/site-packages/structlog/stdlib.py:838: in add_logger_name
+    event_dict["logger"] = logger.name
+                           ^^^^^^^^^^^
+E   AttributeError: 'PrintLogger' object has no attribute 'name'
+__________ TestConsumeStream.test_malformed_json_is_acked_and_skipped __________
+tests/unit/test_queue.py:197: in test_malformed_json_is_acked_and_skipped
+    await consume_stream(STREAM_RAW, "group", "consumer-1", handler)
+shared/queue/client.py:127: in consume_stream
+    log.info("consumer_started", stream=stream, group=group, consumer=consumer)
+.venv/lib/python3.13/site-packages/structlog/_base.py:222: in _proxy_to_logger
+    args, kw = self._process_event(method_name, event, event_kw)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+.venv/lib/python3.13/site-packages/structlog/_base.py:173: in _process_event
+    event_dict = proc(self._logger, method_name, event_dict)
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+.venv/lib/python3.13/site-packages/structlog/stdlib.py:838: in add_logger_name
+    event_dict["logger"] = logger.name
+                           ^^^^^^^^^^^
+E   AttributeError: 'PrintLogger' object has no attribute 'name'
+________________ TestPerimeterMatching.test_match_creates_alert ________________
+tests/unit/test_store.py:68: in test_match_creates_alert
+    count = await match_perimeters(
+modules/store/perimeter.py:85: in match_perimeters
+    log.info(
+.venv/lib/python3.13/site-packages/structlog/_base.py:222: in _proxy_to_logger
+    args, kw = self._process_event(method_name, event, event_kw)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+.venv/lib/python3.13/site-packages/structlog/_base.py:173: in _process_event
+    event_dict = proc(self._logger, method_name, event_dict)
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+.venv/lib/python3.13/site-packages/structlog/stdlib.py:838: in add_logger_name
+    event_dict["logger"] = logger.name
+                           ^^^^^^^^^^^
+E   AttributeError: 'PrintLogger' object has no attribute 'name'
+____________ TestEnrichmentTrigger.test_enrichment_triggered_for_ip ____________
+tests/unit/test_store.py:149: in test_enrichment_triggered_for_ip
+    triggered = await maybe_trigger_enrichment({
+modules/store/enrichment.py:95: in maybe_trigger_enrichment
+    log.info(
+.venv/lib/python3.13/site-packages/structlog/_base.py:222: in _proxy_to_logger
+    args, kw = self._process_event(method_name, event, event_kw)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+.venv/lib/python3.13/site-packages/structlog/_base.py:173: in _process_event
+    event_dict = proc(self._logger, method_name, event_dict)
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+.venv/lib/python3.13/site-packages/structlog/stdlib.py:838: in add_logger_name
+    event_dict["logger"] = logger.name
+                           ^^^^^^^^^^^
+E   AttributeError: 'PrintLogger' object has no attribute 'name'
+_______________ TestStoreWorker.test_insert_calls_insert_object ________________
+tests/unit/test_store.py:230: in test_insert_calls_insert_object
+    await handle_stix_final_message(payload)
+modules/store/worker.py:51: in handle_stix_final_message
+    worker_log.info("store_received")
+.venv/lib/python3.13/site-packages/structlog/_base.py:222: in _proxy_to_logger
+    args, kw = self._process_event(method_name, event, event_kw)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+.venv/lib/python3.13/site-packages/structlog/_base.py:173: in _process_event
+    event_dict = proc(self._logger, method_name, event_dict)
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+.venv/lib/python3.13/site-packages/structlog/stdlib.py:838: in add_logger_name
+    event_dict["logger"] = logger.name
+                           ^^^^^^^^^^^
+E   AttributeError: 'PrintLogger' object has no attribute 'name'
+________________ TestStoreWorker.test_merge_calls_merge_object _________________
+tests/unit/test_store.py:247: in test_merge_calls_merge_object
+    await handle_stix_final_message(payload)
+modules/store/worker.py:51: in handle_stix_final_message
+    worker_log.info("store_received")
+.venv/lib/python3.13/site-packages/structlog/_base.py:222: in _proxy_to_logger
+    args, kw = self._process_event(method_name, event, event_kw)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+.venv/lib/python3.13/site-packages/structlog/_base.py:173: in _process_event
+    event_dict = proc(self._logger, method_name, event_dict)
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+.venv/lib/python3.13/site-packages/structlog/stdlib.py:838: in add_logger_name
+    event_dict["logger"] = logger.name
+                           ^^^^^^^^^^^
+E   AttributeError: 'PrintLogger' object has no attribute 'name'
+___________ TestStoreWorker.test_merge_without_target_does_not_crash ___________
+tests/unit/test_store.py:261: in test_merge_without_target_does_not_crash
+    await handle_stix_final_message(payload)
+modules/store/worker.py:51: in handle_stix_final_message
+    worker_log.info("store_received")
+.venv/lib/python3.13/site-packages/structlog/_base.py:222: in _proxy_to_logger
+    args, kw = self._process_event(method_name, event, event_kw)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+.venv/lib/python3.13/site-packages/structlog/_base.py:173: in _process_event
+    event_dict = proc(self._logger, method_name, event_dict)
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+.venv/lib/python3.13/site-packages/structlog/stdlib.py:838: in add_logger_name
+    event_dict["logger"] = logger.name
+                           ^^^^^^^^^^^
+E   AttributeError: 'PrintLogger' object has no attribute 'name'
+____________ TestStoreWorker.test_malformed_message_does_not_crash _____________
+modules/store/worker.py:37: in handle_stix_final_message
+    msg = StixFinalMessage.model_validate(payload)
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E   pydantic_core._pydantic_core.ValidationError: 11 validation errors for StixFinalMessage
+E   source_id
+E     Field required [type=missing, input_value={'bad': 'payload'}, input_type=dict]
+E       For further information visit https://errors.pydantic.dev/2.12/v/missing
+E   source_url
+E     Field required [type=missing, input_value={'bad': 'payload'}, input_type=dict]
+E       For further information visit https://errors.pydantic.dev/2.12/v/missing
+E   source_type
+E     Field required [type=missing, input_value={'bad': 'payload'}, input_type=dict]
+E       For further information visit https://errors.pydantic.dev/2.12/v/missing
+E   source_category
+E     Field required [type=missing, input_value={'bad': 'payload'}, input_type=dict]
+E       For further information visit https://errors.pydantic.dev/2.12/v/missing
+E   tlp_level
+E     Field required [type=missing, input_value={'bad': 'payload'}, input_type=dict]
+E       For further information visit https://errors.pydantic.dev/2.12/v/missing
+E   fetched_at
+E     Field required [type=missing, input_value={'bad': 'payload'}, input_type=dict]
+E       For further information visit https://errors.pydantic.dev/2.12/v/missing
+E   llm_model
+E     Field required [type=missing, input_value={'bad': 'payload'}, input_type=dict]
+E       For further information visit https://errors.pydantic.dev/2.12/v/missing
+E   llm_duration_ms
+E     Field required [type=missing, input_value={'bad': 'payload'}, input_type=dict]
+E       For further information visit https://errors.pydantic.dev/2.12/v/missing
+E   confidence
+E     Field required [type=missing, input_value={'bad': 'payload'}, input_type=dict]
+E       For further information visit https://errors.pydantic.dev/2.12/v/missing
+E   stix_object
+E     Field required [type=missing, input_value={'bad': 'payload'}, input_type=dict]
+E       For further information visit https://errors.pydantic.dev/2.12/v/missing
+E   action
+E     Field required [type=missing, input_value={'bad': 'payload'}, input_type=dict]
+E       For further information visit https://errors.pydantic.dev/2.12/v/missing
+
+During handling of the above exception, another exception occurred:
+tests/unit/test_store.py:268: in test_malformed_message_does_not_crash
+    await handle_stix_final_message({"bad": "payload"})
+modules/store/worker.py:39: in handle_stix_final_message
+    log.error("store_invalid_message", error=str(exc))
+.venv/lib/python3.13/site-packages/structlog/_base.py:222: in _proxy_to_logger
+    args, kw = self._process_event(method_name, event, event_kw)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+.venv/lib/python3.13/site-packages/structlog/_base.py:173: in _process_event
+    event_dict = proc(self._logger, method_name, event_dict)
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+.venv/lib/python3.13/site-packages/structlog/stdlib.py:838: in add_logger_name
+    event_dict["logger"] = logger.name
+                           ^^^^^^^^^^^
+E   AttributeError: 'PrintLogger' object has no attribute 'name'
+_____________ TestStoreWorker.test_db_error_does_not_crash_worker ______________
+tests/unit/test_store.py:279: in test_db_error_does_not_crash_worker
+    await handle_stix_final_message(payload)
+modules/store/worker.py:51: in handle_stix_final_message
+    worker_log.info("store_received")
+.venv/lib/python3.13/site-packages/structlog/_base.py:222: in _proxy_to_logger
+    args, kw = self._process_event(method_name, event, event_kw)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+.venv/lib/python3.13/site-packages/structlog/_base.py:173: in _process_event
+    event_dict = proc(self._logger, method_name, event_dict)
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+.venv/lib/python3.13/site-packages/structlog/stdlib.py:838: in add_logger_name
+    event_dict["logger"] = logger.name
+                           ^^^^^^^^^^^
+E   AttributeError: 'PrintLogger' object has no attribute 'name'
+________ TestValidatorWorker.test_valid_object_published_to_stix_valid _________
+tests/unit/test_validator.py:286: in test_valid_object_published_to_stix_valid
+    await handle_stix_raw_message(payload)
+modules/validator/worker.py:45: in handle_stix_raw_message
+    worker_log.info("validator_received", object_count=len(msg.stix_objects))
+.venv/lib/python3.13/site-packages/structlog/_base.py:222: in _proxy_to_logger
+    args, kw = self._process_event(method_name, event, event_kw)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+.venv/lib/python3.13/site-packages/structlog/_base.py:173: in _process_event
+    event_dict = proc(self._logger, method_name, event_dict)
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+.venv/lib/python3.13/site-packages/structlog/stdlib.py:838: in add_logger_name
+    event_dict["logger"] = logger.name
+                           ^^^^^^^^^^^
+E   AttributeError: 'PrintLogger' object has no attribute 'name'
+______ TestValidatorWorker.test_invalid_object_published_to_stix_rejected ______
+tests/unit/test_validator.py:309: in test_invalid_object_published_to_stix_rejected
+    await handle_stix_raw_message(payload)
+modules/validator/worker.py:45: in handle_stix_raw_message
+    worker_log.info("validator_received", object_count=len(msg.stix_objects))
+.venv/lib/python3.13/site-packages/structlog/_base.py:222: in _proxy_to_logger
+    args, kw = self._process_event(method_name, event, event_kw)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+.venv/lib/python3.13/site-packages/structlog/_base.py:173: in _process_event
+    event_dict = proc(self._logger, method_name, event_dict)
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+.venv/lib/python3.13/site-packages/structlog/stdlib.py:838: in add_logger_name
+    event_dict["logger"] = logger.name
+                           ^^^^^^^^^^^
+E   AttributeError: 'PrintLogger' object has no attribute 'name'
+___________ TestValidatorWorker.test_mixed_objects_routed_correctly ____________
+tests/unit/test_validator.py:331: in test_mixed_objects_routed_correctly
+    await handle_stix_raw_message(payload)
+modules/validator/worker.py:45: in handle_stix_raw_message
+    worker_log.info("validator_received", object_count=len(msg.stix_objects))
+.venv/lib/python3.13/site-packages/structlog/_base.py:222: in _proxy_to_logger
+    args, kw = self._process_event(method_name, event, event_kw)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+.venv/lib/python3.13/site-packages/structlog/_base.py:173: in _process_event
+    event_dict = proc(self._logger, method_name, event_dict)
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+.venv/lib/python3.13/site-packages/structlog/stdlib.py:838: in add_logger_name
+    event_dict["logger"] = logger.name
+                           ^^^^^^^^^^^
+E   AttributeError: 'PrintLogger' object has no attribute 'name'
+__________ TestValidatorWorker.test_malformed_message_does_not_crash ___________
+modules/validator/worker.py:39: in handle_stix_raw_message
+    msg = StixRawMessage.model_validate(payload)
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E   pydantic_core._pydantic_core.ValidationError: 8 validation errors for StixRawMessage
+E   source_id
+E     Field required [type=missing, input_value={'bad': 'payload'}, input_type=dict]
+E       For further information visit https://errors.pydantic.dev/2.12/v/missing
+E   source_url
+E     Field required [type=missing, input_value={'bad': 'payload'}, input_type=dict]
+E       For further information visit https://errors.pydantic.dev/2.12/v/missing
+E   source_type
+E     Field required [type=missing, input_value={'bad': 'payload'}, input_type=dict]
+E       For further information visit https://errors.pydantic.dev/2.12/v/missing
+E   tlp_level
+E     Field required [type=missing, input_value={'bad': 'payload'}, input_type=dict]
+E       For further information visit https://errors.pydantic.dev/2.12/v/missing
+E   fetched_at
+E     Field required [type=missing, input_value={'bad': 'payload'}, input_type=dict]
+E       For further information visit https://errors.pydantic.dev/2.12/v/missing
+E   llm_model
+E     Field required [type=missing, input_value={'bad': 'payload'}, input_type=dict]
+E       For further information visit https://errors.pydantic.dev/2.12/v/missing
+E   llm_duration_ms
+E     Field required [type=missing, input_value={'bad': 'payload'}, input_type=dict]
+E       For further information visit https://errors.pydantic.dev/2.12/v/missing
+E   stix_objects
+E     Field required [type=missing, input_value={'bad': 'payload'}, input_type=dict]
+E       For further information visit https://errors.pydantic.dev/2.12/v/missing
+
+During handling of the above exception, another exception occurred:
+tests/unit/test_validator.py:339: in test_malformed_message_does_not_crash
+    await handle_stix_raw_message({"bad": "payload"})
+modules/validator/worker.py:41: in handle_stix_raw_message
+    log.error("validator_invalid_message", error=str(exc))
+.venv/lib/python3.13/site-packages/structlog/_base.py:222: in _proxy_to_logger
+    args, kw = self._process_event(method_name, event, event_kw)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+.venv/lib/python3.13/site-packages/structlog/_base.py:173: in _process_event
+    event_dict = proc(self._logger, method_name, event_dict)
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+.venv/lib/python3.13/site-packages/structlog/stdlib.py:838: in add_logger_name
+    event_dict["logger"] = logger.name
+                           ^^^^^^^^^^^
+E   AttributeError: 'PrintLogger' object has no attribute 'name'
+=========================== short test summary info ============================
+FAILED tests/unit/test_api.py::TestAPIEndpoints::test_login_bad_credentials - AttributeError: 'PrintLogger' object has no attribute 'name'
+FAILED tests/unit/test_collector_rss.py::TestRSSConnectorFetch::test_fetch_returns_documents_for_each_entry - AttributeError: 'PrintLogger' object has no attribute 'name'
+FAILED tests/unit/test_collector_rss.py::TestRSSConnectorFetch::test_fetch_falls_back_to_summary_on_article_fetch_failure - AttributeError: 'PrintLogger' object has no attribute 'name'
+FAILED tests/unit/test_collector_rss.py::TestRSSConnectorFetch::test_fetch_returns_empty_on_feed_fetch_failure - AttributeError: 'PrintLogger' object has no attribute 'name'
+FAILED tests/unit/test_collector_rss.py::TestRSSConnectorFetch::test_fetch_returns_empty_when_no_url - AttributeError: 'PrintLogger' object has no attribute 'name'
+FAILED tests/unit/test_collector_rss.py::TestRSSConnectorFetch::test_max_items_respected - AttributeError: 'PrintLogger' object has no attribute 'name'
+FAILED tests/unit/test_collector_rss.py::TestRSSConnectorFetch::test_short_content_skipped - AttributeError: 'PrintLogger' object has no attribute 'name'
+FAILED tests/unit/test_collector_rss.py::TestRSSConnectorFetch::test_published_date_parsed_from_tuple - AttributeError: 'PrintLogger' object has no attribute 'name'
+FAILED tests/unit/test_deduplicator.py::TestExactDedup::test_mark_exact_calls_setex - AttributeError: 'PrintLogger' object has no attribute 'name'
+FAILED tests/unit/test_deduplicator.py::TestDeduplicatorWorker::test_new_object_published_as_insert - AttributeError: 'PrintLogger' object has no attribute 'name'
+FAILED tests/unit/test_deduplicator.py::TestDeduplicatorWorker::test_exact_duplicate_published_as_merge - AttributeError: 'PrintLogger' object has no attribute 'name'
+FAILED tests/unit/test_deduplicator.py::TestDeduplicatorWorker::test_semantic_duplicate_published_as_merge - AttributeError: 'PrintLogger' object has no attribute 'name'
+FAILED tests/unit/test_deduplicator.py::TestDeduplicatorWorker::test_embed_failure_still_publishes_insert - AttributeError: 'PrintLogger' object has no attribute 'name'
+FAILED tests/unit/test_deduplicator.py::TestDeduplicatorWorker::test_malformed_message_does_not_crash - AttributeError: 'PrintLogger' object has no attribute 'name'
+FAILED tests/unit/test_deduplicator.py::TestDeduplicatorWorker::test_insert_registers_exact_dedup - AttributeError: 'PrintLogger' object has no attribute 'name'
+FAILED tests/unit/test_llm_normalizer.py::TestOllamaClient::test_successful_call_returns_objects - AttributeError: 'PrintLogger' object has no attribute 'name'
+FAILED tests/unit/test_llm_normalizer.py::TestOllamaClient::test_invalid_json_triggers_retry - AttributeError: 'PrintLogger' object has no attribute 'name'
+FAILED tests/unit/test_llm_normalizer.py::TestOllamaClient::test_timeout_triggers_fallback - AttributeError: 'PrintLogger' object has no attribute 'name'
+FAILED tests/unit/test_llm_normalizer.py::TestOllamaClient::test_empty_objects_list_on_no_cti - AttributeError: 'PrintLogger' object has no attribute 'name'
+FAILED tests/unit/test_llm_normalizer.py::TestLLMNormalizerWorker::test_valid_chunk_publishes_stix_raw - AttributeError: 'PrintLogger' object has no attribute 'name'
+FAILED tests/unit/test_llm_normalizer.py::TestLLMNormalizerWorker::test_empty_llm_response_does_not_publish - AttributeError: 'PrintLogger' object has no attribute 'name'
+FAILED tests/unit/test_llm_normalizer.py::TestLLMNormalizerWorker::test_malformed_message_does_not_crash - AttributeError: 'PrintLogger' object has no attribute 'name'
+FAILED tests/unit/test_preprocessor.py::TestExtractorHTML::test_html_empty_returns_empty - AttributeError: 'PrintLogger' object has no attribute 'name'
+FAILED tests/unit/test_preprocessor.py::TestExtractorHTML::test_unknown_mime_falls_back_to_text_decode - AttributeError: 'PrintLogger' object has no attribute 'name'
+FAILED tests/unit/test_preprocessor.py::TestExtractorJSON::test_invalid_json_returns_empty - AttributeError: 'PrintLogger' object has no attribute 'name'
+FAILED tests/unit/test_preprocessor.py::TestChunker::test_short_text_returns_empty - AttributeError: 'PrintLogger' object has no attribute 'name'
+FAILED tests/unit/test_preprocessor.py::TestChunker::test_adequate_text_returns_chunks - AttributeError: 'PrintLogger' object has no attribute 'name'
+FAILED tests/unit/test_preprocessor.py::TestChunker::test_long_text_split_into_multiple_chunks - AttributeError: 'PrintLogger' object has no attribute 'name'
+FAILED tests/unit/test_preprocessor.py::TestChunker::test_chunks_contain_original_content - AttributeError: 'PrintLogger' object has no attribute 'name'
+FAILED tests/unit/test_preprocessor.py::TestChunker::test_empty_text_returns_empty - AttributeError: 'PrintLogger' object has no attribute 'name'
+FAILED tests/unit/test_preprocessor.py::TestPreprocessorWorker::test_valid_html_message_produces_chunks - AttributeError: 'PrintLogger' object has no attribute 'name'
+FAILED tests/unit/test_preprocessor.py::TestPreprocessorWorker::test_invalid_base64_does_not_crash - AttributeError: 'PrintLogger' object has no attribute 'name'
+FAILED tests/unit/test_preprocessor.py::TestPreprocessorWorker::test_malformed_message_does_not_crash - AttributeError: 'PrintLogger' object has no attribute 'name'
+FAILED tests/unit/test_preprocessor.py::TestPreprocessorWorker::test_content_below_min_words_produces_no_chunks - AttributeError: 'PrintLogger' object has no attribute 'name'
+FAILED tests/unit/test_queue.py::TestPublish::test_publish_calls_xadd - AttributeError: 'PrintLogger' object has no attribute 'name'
+FAILED tests/unit/test_queue.py::TestPublish::test_publish_serialises_non_string_values - AttributeError: 'PrintLogger' object has no attribute 'name'
+FAILED tests/unit/test_queue.py::TestEnsureConsumerGroup::test_creates_group_when_absent - AttributeError: 'PrintLogger' object has no attribute 'name'
+FAILED tests/unit/test_queue.py::TestConsumeStream::test_handler_called_and_message_acked - AttributeError: 'PrintLogger' object has no attribute 'name'
+FAILED tests/unit/test_queue.py::TestConsumeStream::test_handler_failure_does_not_ack - AttributeError: 'PrintLogger' object has no attribute 'name'
+FAILED tests/unit/test_queue.py::TestConsumeStream::test_malformed_json_is_acked_and_skipped - AttributeError: 'PrintLogger' object has no attribute 'name'
+FAILED tests/unit/test_store.py::TestPerimeterMatching::test_match_creates_alert - AttributeError: 'PrintLogger' object has no attribute 'name'
+FAILED tests/unit/test_store.py::TestEnrichmentTrigger::test_enrichment_triggered_for_ip - AttributeError: 'PrintLogger' object has no attribute 'name'
+FAILED tests/unit/test_store.py::TestStoreWorker::test_insert_calls_insert_object - AttributeError: 'PrintLogger' object has no attribute 'name'
+FAILED tests/unit/test_store.py::TestStoreWorker::test_merge_calls_merge_object - AttributeError: 'PrintLogger' object has no attribute 'name'
+FAILED tests/unit/test_store.py::TestStoreWorker::test_merge_without_target_does_not_crash - AttributeError: 'PrintLogger' object has no attribute 'name'
+FAILED tests/unit/test_store.py::TestStoreWorker::test_malformed_message_does_not_crash - AttributeError: 'PrintLogger' object has no attribute 'name'
+FAILED tests/unit/test_store.py::TestStoreWorker::test_db_error_does_not_crash_worker - AttributeError: 'PrintLogger' object has no attribute 'name'
+FAILED tests/unit/test_validator.py::TestValidatorWorker::test_valid_object_published_to_stix_valid - AttributeError: 'PrintLogger' object has no attribute 'name'
+FAILED tests/unit/test_validator.py::TestValidatorWorker::test_invalid_object_published_to_stix_rejected - AttributeError: 'PrintLogger' object has no attribute 'name'
+FAILED tests/unit/test_validator.py::TestValidatorWorker::test_mixed_objects_routed_correctly - AttributeError: 'PrintLogger' object has no attribute 'name'
+FAILED tests/unit/test_validator.py::TestValidatorWorker::test_malformed_message_does_not_crash - AttributeError: 'PrintLogger' object has no attribute 'name'
+======================== 51 failed, 144 passed in 8.96s ========================

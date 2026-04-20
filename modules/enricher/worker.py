@@ -11,6 +11,7 @@ For each EnrichmentRequest:
 from __future__ import annotations
 
 import json
+import re
 from datetime import UTC, datetime
 
 import structlog
@@ -63,6 +64,18 @@ async def handle_enrichment_request(payload: dict) -> None:
                 found=str(shodan_result.get("found", False)),
             )
 
+    # ── NVD (CVE indicators) ────────────────────────────────────
+    cve_match = re.search(r"CVE-\d{4}-\d+", req.ioc_value)
+    if cve_match:
+        from modules.enricher.nvd import enrich_cve
+        nvd_result = await enrich_cve(cve_match.group(0))
+        if nvd_result:
+            enrichment["nvd"] = nvd_result
+            await record_metric(
+                "enricher.nvd_queried", 1,
+                found=str(nvd_result.get("found", False)),
+            )
+
     if not enrichment:
         log.debug("enricher_no_results", stix_id=req.stix_id, ioc_type=req.ioc_type)
         return
@@ -91,7 +104,7 @@ async def _update_stix_enrichment(stix_id: str, enrichment: dict) -> None:
                     SET stix_data = jsonb_set(
                         stix_data,
                         '{x_cti_enrichment}',
-                        :enrichment::jsonb,
+                        CAST(:enrichment AS jsonb),
                         true
                     ),
                     modified_at = NOW()

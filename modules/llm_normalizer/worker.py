@@ -11,9 +11,11 @@ For each ChunkMessage:
 from __future__ import annotations
 
 import structlog
+from sqlalchemy import text as sa_text
 
 from modules.llm_normalizer.client import OllamaClient
 from modules.llm_normalizer.prompt import SYSTEM_PROMPT, build_user_prompt
+from shared.db import get_session
 from shared.metrics import record_metric
 from shared.models.messages import ChunkMessage, StixRawMessage
 from shared.queue import STREAM_CHUNKS, STREAM_STIX_RAW, consume_stream, publish
@@ -33,6 +35,21 @@ async def _get_client() -> OllamaClient:
         _ollama = OllamaClient()
         await _ollama.__aenter__()
     return _ollama
+
+
+async def _get_system_prompt() -> str:
+    """Load the system prompt from DB settings, falling back to the built-in default."""
+    try:
+        async with get_session() as session:
+            result = await session.execute(
+                sa_text("SELECT value FROM settings WHERE key = 'llm_system_prompt'"),
+            )
+            row = result.scalar()
+            if row:
+                return row
+    except Exception as exc:
+        log.warning("llm_prompt_db_fallback", error=str(exc))
+    return SYSTEM_PROMPT
 
 
 async def handle_chunk_message(payload: dict) -> None:
@@ -60,9 +77,10 @@ async def handle_chunk_message(payload: dict) -> None:
         language=msg.language,
     )
 
+    system_prompt = await _get_system_prompt()
     client = await _get_client()
     stix_objects, model_used, duration_ms = await client.extract_stix(
-        system_prompt=SYSTEM_PROMPT,
+        system_prompt=system_prompt,
         user_prompt=user_prompt,
     )
 

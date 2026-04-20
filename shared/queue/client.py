@@ -78,6 +78,17 @@ async def publish(stream: str, payload: dict[str, Any]) -> str:
     return msg_id
 
 
+# ── Pub/Sub channels ────────────────────────────────────────
+CHANNEL_SOURCES_UPDATED = "sources:updated"
+
+
+async def publish_event(channel: str, message: str = "") -> None:
+    """Publish a simple notification to a Redis pub/sub channel."""
+    client = await get_redis()
+    await client.publish(channel, message or "updated")
+    log.debug("pubsub_published", channel=channel)
+
+
 # ── Consumer ─────────────────────────────────────────────────
 
 Handler = Callable[[dict[str, Any]], Coroutine[Any, Any, None]]

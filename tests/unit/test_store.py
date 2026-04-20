@@ -31,11 +31,11 @@ class TestPerimeterMatching:
         from modules.store.perimeter import extract_ioc_value
         assert extract_ioc_value("not a pattern") is None
 
-    async def test_non_indicator_skipped(self) -> None:
+    async def test_unsupported_type_skipped(self) -> None:
         from modules.store.perimeter import match_perimeters
         count = await match_perimeters(
             stix_object_id="uuid-123",
-            stix_object={"type": "threat-actor", "name": "APT28"},
+            stix_object={"type": "relationship", "name": "uses"},
             source_url="https://example.com",
         )
         assert count == 0
@@ -57,9 +57,17 @@ class TestPerimeterMatching:
         mock_session.__aexit__ = AsyncMock(return_value=False)
         mock_session.commit = AsyncMock()
 
-        # Simulate one matching perimeter
-        mock_row = MagicMock()
-        mock_row.__getitem__ = lambda self, k: "test-perimeter" if k == "name" else "peri-uuid"
+        # Simulate one matching perimeter (use dict — fields need proper types)
+        mock_row = {
+            "id": "peri-uuid",
+            "name": "test-perimeter",
+            "ioc_values": ["198.51.100.1"],
+            "sectors": [],
+            "geo_countries": [],
+            "software_products": [],
+            "ip_ranges": [],
+            "severity": "medium",
+        }
         mock_result = MagicMock()
         mock_result.mappings.return_value.all.return_value = [mock_row]
         mock_session.execute = AsyncMock(return_value=mock_result)
@@ -77,6 +85,156 @@ class TestPerimeterMatching:
 
         assert count == 1
         assert mock_session.commit.called
+
+    # ── ip_in_ranges ──────────────────────────────────────────
+
+    def test_ip_in_ranges_match(self) -> None:
+        from modules.store.perimeter import ip_in_ranges
+        assert ip_in_ranges("10.0.0.5", ["10.0.0.0/24"]) is True
+
+    def test_ip_in_ranges_no_match(self) -> None:
+        from modules.store.perimeter import ip_in_ranges
+        assert ip_in_ranges("192.168.1.1", ["10.0.0.0/24"]) is False
+
+    def test_ip_in_ranges_ipv6(self) -> None:
+        from modules.store.perimeter import ip_in_ranges
+        assert ip_in_ranges("2001:db8::1", ["2001:db8::/32"]) is True
+
+    def test_ip_in_ranges_invalid_ip(self) -> None:
+        from modules.store.perimeter import ip_in_ranges
+        assert ip_in_ranges("not-an-ip", ["10.0.0.0/24"]) is False
+
+    def test_ip_in_ranges_invalid_cidr_skipped(self) -> None:
+        from modules.store.perimeter import ip_in_ranges
+        assert ip_in_ranges("10.0.0.1", ["bad/cidr", "10.0.0.0/24"]) is True
+
+    # ── keywords_match ────────────────────────────────────────
+
+    def test_keywords_match_found(self) -> None:
+        from modules.store.perimeter import keywords_match
+        assert keywords_match(["finance", "banking"], "targeting Finance sector") is True
+
+    def test_keywords_match_case_insensitive(self) -> None:
+        from modules.store.perimeter import keywords_match
+        assert keywords_match(["ENERGY"], "energy sector attacks") is True
+
+    def test_keywords_match_not_found(self) -> None:
+        from modules.store.perimeter import keywords_match
+        assert keywords_match(["healthcare"], "targeting finance sector") is False
+
+    def test_keywords_match_empty_keywords(self) -> None:
+        from modules.store.perimeter import keywords_match
+        assert keywords_match([], "any corpus text") is False
+
+    # ── threat-actor matching ─────────────────────────────────
+
+    async def test_threat_actor_sector_match(self) -> None:
+        from modules.store.perimeter import match_perimeters
+
+        mock_session = AsyncMock()
+        mock_session.__aenter__ = AsyncMock(return_value=mock_session)
+        mock_session.__aexit__ = AsyncMock(return_value=False)
+        mock_session.commit = AsyncMock()
+
+        mock_row = {
+            "id": "peri-uuid",
+            "name": "finance-perimeter",
+            "ioc_values": [],
+            "sectors": ["finance"],
+            "geo_countries": [],
+            "software_products": [],
+            "ip_ranges": [],
+            "severity": "high",
+        }
+        mock_result = MagicMock()
+        mock_result.mappings.return_value.all.return_value = [mock_row]
+        mock_session.execute = AsyncMock(return_value=mock_result)
+
+        with patch("modules.store.perimeter.get_session", return_value=mock_session):
+            count = await match_perimeters(
+                stix_object_id="obj-uuid-456",
+                stix_object={
+                    "type": "threat-actor",
+                    "id": "threat-actor--abc",
+                    "name": "FIN7",
+                    "description": "Targets finance sector companies",
+                },
+                source_url="https://example.com",
+            )
+
+        assert count == 1
+        assert mock_session.commit.called
+
+    async def test_attack_pattern_software_match(self) -> None:
+        from modules.store.perimeter import match_perimeters
+
+        mock_session = AsyncMock()
+        mock_session.__aenter__ = AsyncMock(return_value=mock_session)
+        mock_session.__aexit__ = AsyncMock(return_value=False)
+        mock_session.commit = AsyncMock()
+
+        mock_row = {
+            "id": "peri-uuid",
+            "name": "windows-perimeter",
+            "ioc_values": [],
+            "sectors": [],
+            "geo_countries": [],
+            "software_products": ["Windows"],
+            "ip_ranges": [],
+            "severity": "medium",
+        }
+        mock_result = MagicMock()
+        mock_result.mappings.return_value.all.return_value = [mock_row]
+        mock_session.execute = AsyncMock(return_value=mock_result)
+
+        with patch("modules.store.perimeter.get_session", return_value=mock_session):
+            count = await match_perimeters(
+                stix_object_id="obj-uuid-789",
+                stix_object={
+                    "type": "attack-pattern",
+                    "id": "attack-pattern--xyz",
+                    "name": "Spearphishing",
+                    "x_mitre_platforms": ["Windows", "macOS"],
+                },
+                source_url="https://example.com",
+            )
+
+        assert count == 1
+
+    async def test_indicator_cidr_match(self) -> None:
+        from modules.store.perimeter import match_perimeters
+
+        mock_session = AsyncMock()
+        mock_session.__aenter__ = AsyncMock(return_value=mock_session)
+        mock_session.__aexit__ = AsyncMock(return_value=False)
+        mock_session.commit = AsyncMock()
+
+        mock_row = {
+            "id": "peri-uuid",
+            "name": "lan-perimeter",
+            "ioc_values": [],
+            "sectors": [],
+            "geo_countries": [],
+            "software_products": [],
+            "ip_ranges": ["10.0.0.0/8"],
+            "severity": "critical",
+        }
+        mock_result = MagicMock()
+        mock_result.mappings.return_value.all.return_value = [mock_row]
+        mock_session.execute = AsyncMock(return_value=mock_result)
+
+        with patch("modules.store.perimeter.get_session", return_value=mock_session):
+            count = await match_perimeters(
+                stix_object_id="obj-uuid-cidr",
+                stix_object={
+                    "type": "indicator",
+                    "id": "indicator--cidr",
+                    "pattern": "[ipv4-addr:value = '10.20.30.40']",
+                },
+                source_url="https://example.com",
+            )
+
+        assert count == 1
 
     async def test_no_match_no_alert(self) -> None:
         from modules.store.perimeter import match_perimeters

@@ -6,6 +6,8 @@ COPY pyproject.toml .
 RUN uv sync --no-dev --no-install-project
 COPY shared/ shared/
 COPY modules/api/ modules/api/
+COPY modules/llm_normalizer/prompt.py modules/llm_normalizer/prompt.py
+COPY modules/llm_normalizer/__init__.py modules/llm_normalizer/__init__.py
 RUN uv sync --no-dev
 
 CMD ["uv", "run", "uvicorn", "modules.api.main:app", \

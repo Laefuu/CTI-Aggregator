@@ -11,7 +11,8 @@ export default defineConfig({
       "/perimeters":"http://localhost:8000",
       "/alerts":    "http://localhost:8000",
       "/metrics":   "http://localhost:8000",
+      "/settings":  "http://localhost:8000",
     },
   },
-  build: { outDir: "../frontend/dist" },
+  build: { outDir: "dist" },
 })

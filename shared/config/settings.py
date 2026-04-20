@@ -59,6 +59,7 @@ class Settings(BaseSettings):
 
     # ── LLM ───────────────────────────────────────────────────
     ollama_base_url: str = "http://127.0.0.1:11434"
+    ollama_bearer_token: str = ""
     llm_model: str = "llama3.3:70b-instruct-q4_K_M"
     llm_fallback_model: str = "mistral:7b-instruct-q4_K_M"
     llm_timeout_seconds: int = 600
@@ -66,7 +67,7 @@ class Settings(BaseSettings):
 
     # ── Embeddings ────────────────────────────────────────────
     embedding_model: str = "BAAI/bge-m3"
-    dedup_semantic_threshold: float = 0.92
+    semantic_dedup_threshold: float = 0.92
 
     # ── JWT ───────────────────────────────────────────────────
     jwt_secret: str
@@ -98,11 +99,18 @@ class Settings(BaseSettings):
     smtp_from: str = ""
     alert_recipients: str = ""
 
+    # ── File uploads ──────────────────────────────────────────
+    upload_dir: str = "/data/uploads"
+
     # ── External APIs (optional) ──────────────────────────────
     virustotal_api_key: str = ""
     shodan_api_key: str = ""
     misp_base_url: str = ""
     misp_api_key: str = ""
+
+    # ── Grafana (optional — incident counters on dashboard) ───
+    grafana_url: str = ""          # e.g. https://grafana.internal
+    grafana_api_key: str = ""      # Service account token (Bearer)
 
     # ── Derived helpers ───────────────────────────────────────
     @property

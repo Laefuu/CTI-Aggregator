@@ -14,7 +14,7 @@ from datetime import UTC, datetime
 
 import structlog
 
-from modules.validator.confidence import compute_confidence
+from modules.validator.confidence import compute_confidence_with_detail
 from modules.validator.hallucination import validate_and_fix_metadata
 from modules.validator.stix_validator import validate_stix_object
 from shared.metrics import record_metric
@@ -104,11 +104,17 @@ async def handle_stix_raw_message(payload: dict) -> None:
             continue
 
         # 3. Confidence score
-        confidence = compute_confidence(
+        confidence, confidence_detail = compute_confidence_with_detail(
             source_category=msg.source_type.value,  # placeholder until source row is loaded
             published_at=msg.published_at,
             fetched_at=msg.fetched_at,
+            hallucination_count=len(warnings),
+            stix_obj=result.obj,
         )
+
+        # Inject confidence breakdown into the STIX object
+        validated_obj = dict(result.obj)  # type: ignore[arg-type]
+        validated_obj["x_cti_confidence_detail"] = confidence_detail
 
         # 4. Publish valid
         out_msg = StixValidMessage(
@@ -122,7 +128,7 @@ async def handle_stix_raw_message(payload: dict) -> None:
             llm_model=msg.llm_model,
             llm_duration_ms=msg.llm_duration_ms,
             confidence=confidence,
-            stix_object=result.obj,  # type: ignore[arg-type]
+            stix_object=validated_obj,
         )
 
         await publish(STREAM_STIX_VALID, out_msg.model_dump())

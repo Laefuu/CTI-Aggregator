@@ -2,13 +2,16 @@
 COMPOSE := docker compose -f infra/docker-compose.yml --env-file .env
 MODULE_NAME ?= unknown
 
-# Fix Docker client/daemon API version mismatch
-export DOCKER_API_VERSION=1.43
+# NOTE: docker compose commands auto-negotiate the API version (no pin needed).
+# For bare `docker` CLI calls (docker exec, docker ps, etc.), use:
+#   DOCKER_API_VERSION=1.43 docker <cmd>
+# because the daemon on this host caps at 1.43.
 
 .PHONY: help up down build restart logs migrate migrate-down \
         migrate-status migrate-history migrate-new pull-model \
         run-source test test-unit test-integration test-llm \
-        lint fmt audit shell-db shell-redis clean
+        lint fmt audit shell-db shell-redis clean bootstrap-env \
+        start stop frontend-install frontend-dev status
 
 # ── Help ──────────────────────────────────────────────────────────────────────
 
@@ -18,10 +21,43 @@ help: ## Show this help
 
 # ── Infrastructure ────────────────────────────────────────────────────────────
 
-up: ## Start all services
+# Docker Compose interpolates ${VAR} from a .env file next to the compose file,
+# NOT from --env-file (which only loads vars into container envs). To keep
+# interpolation working for raw `docker compose -f infra/docker-compose.yml`
+# invocations AND for `make ...`, we symlink infra/.env -> ../.env on bootstrap.
+bootstrap-env: ## Ensure infra/.env symlink exists (needed for Compose interpolation)
+	@if [ ! -e infra/.env ]; then \
+	  echo ">> Creating symlink infra/.env -> ../.env"; \
+	  ln -s ../.env infra/.env; \
+	fi
+
+up: bootstrap-env ## Start all services
 	$(COMPOSE) up -d
 
-up-infra: ## Start infrastructure only (postgres, redis, ollama, nginx)
+# ── One-shot launcher ────────────────────────────────────────────────────────
+# Everything runs in Docker — backend + frontend.
+# `make start` is an alias for `make up`.
+
+start: up ## Start everything — backend + frontend (all in Docker)
+	@echo ""
+	@echo "========================================"
+	@echo "  Frontend : http://localhost:5173"
+	@echo "  API      : http://localhost:8000"
+	@echo "========================================"
+
+stop: down ## Stop all containers
+
+status: ## Show all container status
+	@$(COMPOSE) ps
+
+frontend-dev: ## Start Vite dev server locally (hot-reload for frontend dev)
+	@if [ ! -d frontend/node_modules ]; then cd frontend && npm install; fi
+	@cd frontend && npm run dev
+
+frontend-build: ## Rebuild only the frontend Docker image
+	$(COMPOSE) build frontend
+
+up-infra: bootstrap-env ## Start infrastructure only (postgres, redis, ollama, nginx)
 	$(COMPOSE) up -d postgres redis ollama nginx
 
 down: ## Stop all services
@@ -30,13 +66,13 @@ down: ## Stop all services
 down-volumes: ## Stop all services and remove volumes (DESTRUCTIVE)
 	$(COMPOSE) down -v
 
-build: ## Rebuild all service images
+build: bootstrap-env ## Rebuild all service images
 	$(COMPOSE) build
 
-build-no-cache: ## Rebuild all images without cache
+build-no-cache: bootstrap-env ## Rebuild all images without cache
 	$(COMPOSE) build --no-cache
 
-restart: ## Restart all services
+restart: bootstrap-env ## Restart all services
 	$(COMPOSE) restart
 
 logs: ## Stream logs from all services
@@ -51,7 +87,7 @@ ps: ## Show service status
 # ── Database ──────────────────────────────────────────────────────────────────
 
 # Alembic runs inside the store container so it can reach postgres on cti-net
-ALEMBIC := $(COMPOSE) run --rm --no-deps store uv run alembic -c modules/store/alembic.ini
+ALEMBIC := $(COMPOSE) run --rm store uv run alembic -c modules/store/alembic.ini
 
 migrate: ## Apply all pending Alembic migrations (requires infra running)
 	$(ALEMBIC) upgrade head
@@ -150,7 +186,7 @@ endif
 ifndef PASSWORD
 	$(error PASSWORD is required. Usage: make bootstrap-admin EMAIL=admin@org.internal PASSWORD=secret)
 endif
-	$(COMPOSE) exec api python -m api.bootstrap --email $(EMAIL) --password $(PASSWORD)
+	$(COMPOSE) exec api python -m modules.api.bootstrap --email $(EMAIL) --password $(PASSWORD)
 
 # ── Cleanup ───────────────────────────────────────────────────────────────────
 

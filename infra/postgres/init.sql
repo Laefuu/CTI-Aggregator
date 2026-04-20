@@ -30,7 +30,7 @@ CREATE TABLE stix_objects (
 );
 
 COMMENT ON TABLE stix_objects IS 'Canonical STIX 2.1 objects. One row per unique entity after deduplication.';
-COMMENT ON COLUMN stix_objects.confidence IS '0-100 score: source reliability (40) + freshness (30) + corroboration (30)';
+COMMENT ON COLUMN stix_objects.confidence IS '0-100 score: reliability (35) + freshness (25) + corroboration (20) + llm_quality (20). Detail in stix_data.x_cti_confidence_detail';
 COMMENT ON COLUMN stix_objects.is_merged IS 'True if this object was identified as a duplicate and absorbed into merged_into';
 
 -- ── Object provenance ─────────────────────────────────────────

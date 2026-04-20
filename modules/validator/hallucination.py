@@ -17,6 +17,7 @@ from __future__ import annotations
 
 import re
 from urllib.parse import urlparse
+import uuid as uuid_lib
 
 import structlog
 
@@ -37,7 +38,12 @@ def validate_and_fix_metadata(
     """
     warnings: list[str] = []
     obj = dict(stix_obj)
-
+    stix_type = obj.get("type", "indicator")
+    try:
+        suffix = obj["id"].split("--")[1]
+        uuid_lib.UUID(suffix, version=4)
+    except (KeyError, ValueError, IndexError):
+        obj["id"] = f"{stix_type}--{uuid_lib.uuid4()}"
     # ── x_cti_source_url ─────────────────────────────────────
     llm_url = obj.get("x_cti_source_url", "")
 

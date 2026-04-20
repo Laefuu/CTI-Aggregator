@@ -3,12 +3,14 @@ from __future__ import annotations
 
 from datetime import datetime
 
+import httpx
 from fastapi import APIRouter, Depends, Query
 from pydantic import BaseModel
 from sqlalchemy import text
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from modules.api.deps import get_current_user, get_db
+from shared.config import get_settings
 
 router = APIRouter(prefix="/metrics", tags=["metrics"])
 
@@ -56,6 +58,102 @@ async def get_summary(
         alerts_new=int(row["alerts_new"]),
         top_stix_types=types,
     )
+
+
+class IncidentCounts(BaseModel):
+    new: int | None
+    acknowledged: int | None
+    resolved: int | None
+    source: str  # "grafana" | "unavailable"
+
+
+@router.get("/incidents", response_model=IncidentCounts)
+async def get_incident_counts(
+    _: dict = Depends(get_current_user),
+) -> IncidentCounts:
+    """
+    Proxy to Grafana Alertmanager API for incident counts.
+    Returns None values when Grafana is not configured or unreachable.
+    """
+    settings = get_settings()
+    if not settings.grafana_url or not settings.grafana_api_key:
+        return IncidentCounts(new=None, acknowledged=None, resolved=None, source="unavailable")
+
+    url = settings.grafana_url.rstrip("/") + "/api/alertmanager/grafana/api/v2/alerts"
+    headers = {"Authorization": f"Bearer {settings.grafana_api_key}"}
+
+    try:
+        async with httpx.AsyncClient(timeout=5.0, verify=False) as client:
+            resp = await client.get(url, headers=headers)
+        if resp.status_code != 200:
+            return IncidentCounts(new=None, acknowledged=None, resolved=None, source="unavailable")
+
+        alerts = resp.json()
+        counts: dict[str, int] = {"new": 0, "acknowledged": 0, "resolved": 0}
+        for alert in alerts:
+            state = (alert.get("status", {}).get("state") or "").lower()
+            if state == "active":
+                counts["new"] += 1
+            elif state == "suppressed":
+                counts["acknowledged"] += 1
+            elif state == "unprocessed":
+                counts["resolved"] += 1
+        return IncidentCounts(
+            new=counts["new"],
+            acknowledged=counts["acknowledged"],
+            resolved=counts["resolved"],
+            source="grafana",
+        )
+    except Exception:
+        return IncidentCounts(new=None, acknowledged=None, resolved=None, source="unavailable")
+
+
+@router.get("/top-threats", response_model=list[dict])
+async def get_top_threats(
+    db: AsyncSession = Depends(get_db),
+    _: dict = Depends(get_current_user),
+) -> list[dict]:
+    """Top 6 threat-actors by confidence, with alert count."""
+    rows = (await db.execute(text("""
+        SELECT
+            so.stix_id,
+            so.stix_data->>'name'            AS name,
+            so.confidence,
+            so.modified_at,
+            COUNT(a.id)                      AS alert_count
+        FROM stix_objects so
+        LEFT JOIN alerts a ON a.stix_object_id = so.id AND a.status = 'new'
+        WHERE so.stix_type = 'threat-actor' AND so.is_merged = FALSE
+        GROUP BY so.id
+        ORDER BY so.confidence DESC, alert_count DESC
+        LIMIT 6
+    """))).mappings().all()
+    return [dict(r) for r in rows]
+
+
+@router.get("/recent-cves", response_model=list[dict])
+async def get_recent_cves(
+    db: AsyncSession = Depends(get_db),
+    _: dict = Depends(get_current_user),
+) -> list[dict]:
+    """Last 10 CVE objects — indicators whose name matches CVE-YYYY-NNNNN."""
+    rows = (await db.execute(text("""
+        SELECT
+            so.stix_id,
+            (regexp_match(so.stix_data->>'name', 'CVE-[0-9]{4}-[0-9]+'))[1] AS cve_id,
+            so.stix_data->>'description'      AS description,
+            so.stix_data->>'x_cti_source_url' AS source_url,
+            so.confidence,
+            so.created_at,
+            (so.stix_data #>> '{x_cti_enrichment,nvd,cvss_score}')::float AS cvss_score,
+            so.stix_data #>> '{x_cti_enrichment,nvd,cvss_severity}' AS cvss_severity
+        FROM stix_objects so
+        WHERE so.is_merged = FALSE
+          AND so.stix_data->>'name' ~ 'CVE-[0-9]{4}-[0-9]+'
+        ORDER BY so.created_at DESC
+        LIMIT 10
+    """))).mappings().all()
+    return [dict(r) for r in rows]
 
 
 @router.get("", response_model=list[MetricPoint])

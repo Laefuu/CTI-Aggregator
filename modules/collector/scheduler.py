@@ -29,6 +29,7 @@ from shared.config import get_settings
 from shared.db import get_session
 from shared.metrics import record_metric
 from shared.models.enums import SourceType, TLPLevel
+from shared.queue import CHANNEL_SOURCES_UPDATED, get_redis
 
 log = structlog.get_logger()
 
@@ -170,6 +171,40 @@ class CollectorScheduler:
                 log.warning("source_load_failed", source_id=row["id"], error=str(exc))
 
         return sources
+
+    async def listen_for_updates(self) -> None:
+        """Subscribe to sources:updated pub/sub channel and reload jobs on change."""
+        client = await get_redis()
+        pubsub = client.pubsub()
+        await pubsub.subscribe(CHANNEL_SOURCES_UPDATED)
+        log.info("collector_pubsub_subscribed", channel=CHANNEL_SOURCES_UPDATED)
+
+        try:
+            async for message in pubsub.listen():
+                if message["type"] != "message":
+                    continue
+                log.info("collector_sources_changed", trigger="pubsub")
+                await self._sync_jobs()
+        finally:
+            await pubsub.unsubscribe(CHANNEL_SOURCES_UPDATED)
+            await pubsub.aclose()
+
+    async def _sync_jobs(self) -> None:
+        """Reload sources from DB and add/remove scheduler jobs accordingly."""
+        sources = await self._load_sources()
+        current_ids = {f"source_{s.id}" for s in sources}
+        existing_ids = {j.id for j in self._scheduler.get_jobs()}
+
+        # Remove jobs for sources that no longer exist or are disabled
+        for job_id in existing_ids - current_ids:
+            self._scheduler.remove_job(job_id)
+            log.info("job_removed", job_id=job_id)
+
+        # Add or update jobs for current sources
+        for source in sources:
+            self._register_job(source)
+
+        log.info("scheduler_synced", job_count=len(sources))
 
     async def _update_source_status(
         self,

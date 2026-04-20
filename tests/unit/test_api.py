@@ -82,15 +82,47 @@ class TestPerimeterSchemas:
         p = PerimeterCreate(name="Finance", ioc_values=["1.2.3.4", "evil.com"])
         assert len(p.ioc_values) == 2
 
+    def test_perimeter_new_fields_default(self) -> None:
+        from modules.api.schemas.perimeter import PerimeterCreate
+        p = PerimeterCreate(name="Energy")
+        assert p.geo_countries == []
+        assert p.software_products == []
+        assert p.ip_ranges == []
+        assert p.severity == "medium"
+
+    def test_perimeter_severity_valid(self) -> None:
+        from modules.api.schemas.perimeter import PerimeterCreate
+        for sev in ("low", "medium", "high", "critical"):
+            p = PerimeterCreate(name="Test", severity=sev)
+            assert p.severity == sev
+
+    def test_perimeter_severity_invalid(self) -> None:
+        from pydantic import ValidationError
+        from modules.api.schemas.perimeter import PerimeterCreate
+        with pytest.raises(ValidationError):
+            PerimeterCreate(name="Test", severity="extreme")
+
     def test_alert_ack_valid(self) -> None:
         from modules.api.schemas.perimeter import AlertAck
         assert AlertAck(status="acked").status == "acked"
+
+    def test_alert_ack_severity_only(self) -> None:
+        from modules.api.schemas.perimeter import AlertAck
+        a = AlertAck(severity="critical")
+        assert a.severity == "critical"
+        assert a.status is None
 
     def test_alert_ack_invalid(self) -> None:
         from pydantic import ValidationError
         from modules.api.schemas.perimeter import AlertAck
         with pytest.raises(ValidationError):
             AlertAck(status="deleted")
+
+    def test_alert_ack_severity_invalid(self) -> None:
+        from pydantic import ValidationError
+        from modules.api.schemas.perimeter import AlertAck
+        with pytest.raises(ValidationError):
+            AlertAck(severity="extreme")
 
 
 @pytest.mark.unit
@@ -165,3 +197,54 @@ class TestAPIEndpoints:
         from fastapi.testclient import TestClient
         client = TestClient(self._app())
         assert client.get("/alerts").status_code == 401
+
+    def test_upload_requires_auth(self) -> None:
+        from fastapi.testclient import TestClient
+        client = TestClient(self._app())
+        assert client.post("/sources/upload").status_code == 401
+
+    def test_enrich_requires_auth(self) -> None:
+        from fastapi.testclient import TestClient
+        client = TestClient(self._app())
+        assert client.post("/objects/indicator--abc/enrich").status_code == 401
+
+
+# ── _extract_ioc helper ───────────────────────────────────────
+
+@pytest.mark.unit
+class TestExtractIoc:
+    def test_ipv4_indicator_pattern(self) -> None:
+        from modules.api.routers.objects import _extract_ioc
+        ioc_type, ioc_value = _extract_ioc(
+            "indicator",
+            {"pattern": "[ipv4-addr:value = '198.51.100.1']"},
+        )
+        assert ioc_type == "ipv4-addr"
+        assert ioc_value == "198.51.100.1"
+
+    def test_domain_indicator_pattern(self) -> None:
+        from modules.api.routers.objects import _extract_ioc
+        ioc_type, ioc_value = _extract_ioc(
+            "indicator",
+            {"pattern": "[domain-name:value = 'evil.example.com']"},
+        )
+        assert ioc_type == "domain-name"
+        assert ioc_value == "evil.example.com"
+
+    def test_threat_actor_uses_name(self) -> None:
+        from modules.api.routers.objects import _extract_ioc
+        ioc_type, ioc_value = _extract_ioc(
+            "threat-actor",
+            {"name": "APT28"},
+        )
+        assert ioc_type == "threat-actor"
+        assert ioc_value == "APT28"
+
+    def test_indicator_without_pattern_falls_back(self) -> None:
+        from modules.api.routers.objects import _extract_ioc
+        ioc_type, ioc_value = _extract_ioc(
+            "indicator",
+            {"name": "suspicious IP", "pattern": ""},
+        )
+        assert ioc_type == "indicator"
+        assert ioc_value == "suspicious IP"

@@ -1,4 +1,5 @@
 from shared.queue.client import (
+    CHANNEL_SOURCES_UPDATED,
     STREAM_ALERTS,
     STREAM_CHUNKS,
     STREAM_ENRICHMENT,
@@ -14,6 +15,7 @@ from shared.queue.client import (
     get_redis,
     get_stream_length,
     publish,
+    publish_event,
 )
 
 __all__ = [
@@ -26,6 +28,8 @@ __all__ = [
     "STREAM_STIX_FINAL",
     "STREAM_ENRICHMENT",
     "STREAM_ALERTS",
+    # Pub/sub channels
+    "CHANNEL_SOURCES_UPDATED",
     # Functions
     "close_redis",
     "consume_stream",
@@ -34,4 +38,5 @@ __all__ = [
     "get_redis",
     "get_stream_length",
     "publish",
+    "publish_event",
 ]

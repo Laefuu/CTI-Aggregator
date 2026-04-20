@@ -34,7 +34,10 @@ async def main() -> None:
 
     try:
         await scheduler.start()
+        # Listen for source changes via Redis pub/sub in background
+        pubsub_task = asyncio.create_task(scheduler.listen_for_updates())
         await stop_event.wait()
+        pubsub_task.cancel()
     finally:
         await scheduler.stop()
         await close_redis()

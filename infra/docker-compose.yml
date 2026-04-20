@@ -93,7 +93,7 @@ services:
       # - ../frontend/dist:/usr/share/nginx/html:ro
     healthcheck:
       <<: *hc-defaults
-      test: ["CMD", "wget", "--spider", "-q", "http://localhost/health"]
+      test: ["CMD", "wget", "--spider", "-q", "http://127.0.0.1/health"]
     # depends_on api removed — api Dockerfile does not exist yet (Phase 2)
 
   # ── Pipeline modules ────────────────────────────────────────
@@ -187,9 +187,18 @@ services:
     depends_on:
       postgres: {condition: service_healthy}
       redis:    {condition: service_healthy}
-    # Exposed for direct access during development (optional)
-    # ports:
-    #   - "8000:8000"
+    ports:
+      - "8000:8000"
+
+  frontend:
+    <<: *common
+    build:
+      context: ../frontend
+      dockerfile: Dockerfile
+    ports:
+      - "5173:5173"
+    depends_on:
+      - api
 
 volumes:
   postgres_data:

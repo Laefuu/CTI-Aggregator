@@ -30,27 +30,32 @@ venv/
 htmlcov/
 coverage.xml
 
-# ── Docker volumes (if mounted locally) ───────────────────────
-infra/volumes/
+# ── Logs ──────────────────────────────────────────────────────
+*.log
+log.txt
+logs/
 
-# ── Ollama models (large binary files) ───────────────────────
+# ── Docker ────────────────────────────────────────────────────
+infra/.env          # auto-generated symlink (make bootstrap-env)
+infra/volumes/
 infra/ollama/models/
 
 # ── IDE ───────────────────────────────────────────────────────
 .idea/
-.vscode/
+.vscode/*
+!.vscode/settings.json
 *.swp
 *.swo
 .DS_Store
+Thumbs.db
 
-# ── Frontend build ────────────────────────────────────────────
+# ── Claude Code local data ────────────────────────────────────
+.claude/
+
+# ── Frontend ──────────────────────────────────────────────────
 frontend/dist/
 frontend/node_modules/
 frontend/.vite/
-
-# ── Logs ──────────────────────────────────────────────────────
-*.log
-logs/
 
 # ── Benchmark results (keep the template, ignore actual results) ──
 infra/ollama/benchmark_results.json

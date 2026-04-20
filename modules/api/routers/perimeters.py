@@ -1,6 +1,8 @@
 """CRUD /perimeters and GET/PATCH /alerts."""
 from __future__ import annotations
 
+from typing import Any
+
 from fastapi import APIRouter, Depends, HTTPException, Query, status
 from sqlalchemy import text
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -12,21 +14,33 @@ from modules.api.schemas.perimeter import (
 
 router = APIRouter(tags=["perimeters"])
 
-_PERI_SELECT = """
-    SELECT id::text, name, description, ioc_values, sectors,
-           enabled, webhook_url, created_at, updated_at
-    FROM perimeters
+_PERI_COLS = """
+    id::text, name, description,
+    ioc_values, sectors, geo_countries, software_products, ip_ranges,
+    severity, enabled, webhook_url, created_at, updated_at
 """
+
+_PERI_SELECT = f"SELECT {_PERI_COLS} FROM perimeters"
 
 _ALERT_SELECT = """
     SELECT a.id::text, a.perimeter_id::text,
            p.name AS perimeter_name,
            a.stix_object_id::text, so.stix_id,
-           a.source_url, a.triggered_at, a.status,
+           a.source_url, a.triggered_at, a.status, a.severity,
            a.notified, a.acked_by, a.acked_at
     FROM alerts a
     JOIN perimeters p ON p.id = a.perimeter_id
     JOIN stix_objects so ON so.id = a.stix_object_id
+"""
+
+# Severity sort expression — critical first, then high, medium, low
+_SEVERITY_ORDER = """
+    CASE a.severity
+        WHEN 'critical' THEN 1
+        WHEN 'high'     THEN 2
+        WHEN 'medium'   THEN 3
+        WHEN 'low'      THEN 4
+    END
 """
 
 
@@ -47,19 +61,28 @@ async def create_perimeter(
     result = await db.execute(
         text(f"""
             INSERT INTO perimeters
-                (name, description, ioc_values, sectors, enabled, webhook_url)
-            VALUES (:name, :description, :ioc_values, :sectors, :enabled, :webhook_url)
-            RETURNING id::text, name, description, ioc_values, sectors,
-                      enabled, webhook_url, created_at, updated_at
+                (name, description, ioc_values, sectors, geo_countries,
+                 software_products, ip_ranges, severity, enabled, webhook_url)
+            VALUES
+                (:name, :description, :ioc_values, :sectors, :geo_countries,
+                 :software_products, :ip_ranges, :severity, :enabled, :webhook_url)
+            RETURNING {_PERI_COLS}
         """),
         {
-            "name": body.name, "description": body.description,
-            "ioc_values": body.ioc_values, "sectors": body.sectors,
-            "enabled": body.enabled, "webhook_url": body.webhook_url,
+            "name": body.name,
+            "description": body.description,
+            "ioc_values": body.ioc_values,
+            "sectors": body.sectors,
+            "geo_countries": body.geo_countries,
+            "software_products": body.software_products,
+            "ip_ranges": body.ip_ranges,
+            "severity": body.severity,
+            "enabled": body.enabled,
+            "webhook_url": body.webhook_url,
         },
     )
     await db.commit()
-    return PerimeterResponse(**dict(result.mappings().first()))
+    return PerimeterResponse(**dict(result.mappings().first()))  # type: ignore[arg-type]
 
 
 @router.get("/perimeters/{perimeter_id}", response_model=PerimeterResponse)
@@ -92,8 +115,7 @@ async def update_perimeter(
         text(f"""
             UPDATE perimeters SET {", ".join(set_parts)}
             WHERE id = CAST(:id AS uuid)
-            RETURNING id::text, name, description, ioc_values, sectors,
-                      enabled, webhook_url, created_at, updated_at
+            RETURNING {_PERI_COLS}
         """),
         {**updates, "id": perimeter_id},
     )
@@ -111,7 +133,8 @@ async def delete_perimeter(
     _: dict = Depends(get_current_user),
 ) -> None:
     result = await db.execute(
-        text("DELETE FROM perimeters WHERE id = CAST(:id AS uuid) RETURNING id"), {"id": perimeter_id}
+        text("DELETE FROM perimeters WHERE id = CAST(:id AS uuid) RETURNING id"),
+        {"id": perimeter_id},
     )
     await db.commit()
     if not result.first():
@@ -121,42 +144,68 @@ async def delete_perimeter(
 @router.get("/alerts", response_model=list[AlertResponse])
 async def list_alerts(
     status: str | None = Query(default=None, pattern="^(new|acked|false_positive)$"),
+    severity: str | None = Query(default=None, pattern="^(low|medium|high|critical)$"),
     perimeter_id: str | None = Query(default=None),
     limit: int = Query(default=50, ge=1, le=200),
     db: AsyncSession = Depends(get_db),
     _: dict = Depends(get_current_user),
 ) -> list[AlertResponse]:
     conditions = ["1=1"]
-    params: dict = {"limit": limit}
+    params: dict[str, Any] = {"limit": limit}
+
     if status:
         conditions.append("a.status = :status")
         params["status"] = status
+    if severity:
+        conditions.append("a.severity = :severity")
+        params["severity"] = severity
     if perimeter_id:
         conditions.append("a.perimeter_id = CAST(:perimeter_id AS uuid)")
         params["perimeter_id"] = perimeter_id
 
     result = await db.execute(
-        text(f"{_ALERT_SELECT} WHERE {' AND '.join(conditions)} ORDER BY a.triggered_at DESC LIMIT :limit"),
+        text(f"""
+            {_ALERT_SELECT}
+            WHERE {" AND ".join(conditions)}
+            ORDER BY {_SEVERITY_ORDER}, a.triggered_at DESC
+            LIMIT :limit
+        """),
         params,
     )
     return [AlertResponse(**dict(r)) for r in result.mappings().all()]
 
 
 @router.patch("/alerts/{alert_id}", response_model=AlertResponse)
-async def ack_alert(
+async def patch_alert(
     alert_id: str,
     body: AlertAck,
     current_user: dict = Depends(get_current_user),
     db: AsyncSession = Depends(get_db),
 ) -> AlertResponse:
+    updates = body.model_dump(exclude_none=True)
+    if not updates:
+        raise HTTPException(status_code=422, detail="No fields to update")
+
+    set_parts: list[str] = []
+    params: dict[str, Any] = {"id": alert_id}
+
+    if "status" in updates:
+        set_parts.append("status = :status")
+        params["status"] = updates["status"]
+        # Record who acknowledged
+        set_parts.append("acked_by = :email")
+        set_parts.append("acked_at = NOW()")
+        params["email"] = current_user.get("email")
+    if "severity" in updates:
+        set_parts.append("severity = :severity")
+        params["severity"] = updates["severity"]
+
     await db.execute(
-        text("""
-            UPDATE alerts SET status = :status, acked_by = :email, acked_at = NOW()
-            WHERE id = CAST(:id AS uuid)
-        """),
-        {"id": alert_id, "status": body.status, "email": current_user.get("email")},
+        text(f"UPDATE alerts SET {', '.join(set_parts)} WHERE id = CAST(:id AS uuid)"),
+        params,
     )
     await db.commit()
+
     result = await db.execute(
         text(f"{_ALERT_SELECT} WHERE a.id = CAST(:id AS uuid)"), {"id": alert_id}
     )

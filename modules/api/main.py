@@ -9,6 +9,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
 from modules.api.routers import auth, metrics, objects, perimeters, sources
+from modules.api.routers import settings as settings_router
 from shared.config import get_settings
 from shared.db import close_engine
 from shared.logging import configure_logging
@@ -45,6 +46,7 @@ def create_app() -> FastAPI:
     app.include_router(objects.router)
     app.include_router(perimeters.router)
     app.include_router(metrics.router)
+    app.include_router(settings_router.router)
 
     @app.get("/health", tags=["health"])
     async def health() -> dict:

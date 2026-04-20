@@ -41,8 +41,13 @@ class OllamaClient:
         self._client: httpx.AsyncClient | None = None
 
     async def __aenter__(self) -> "OllamaClient":
+        settings = get_settings()
+        headers = {}
+        if settings.ollama_bearer_token:
+            headers["Authorization"] = f"Bearer {settings.ollama_bearer_token}"
         self._client = httpx.AsyncClient(
             base_url=self._base_url,
+            headers=headers,
             timeout=httpx.Timeout(self._timeout, connect=10.0),
         )
         return self

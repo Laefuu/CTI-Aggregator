@@ -21,7 +21,7 @@ class TestConfidenceScore:
             published_at=datetime.now(UTC) - timedelta(hours=1),
             fetched_at=datetime.now(UTC),
         )
-        assert score == 70  # 40 + 30 + 0
+        assert score == 80  # 35 + 25 + 0 + 20
 
     def test_trusted_fresh_three_sources(self) -> None:
         from modules.validator.confidence import compute_confidence
@@ -31,7 +31,7 @@ class TestConfidenceScore:
             fetched_at=datetime.now(UTC),
             source_count=3,
         )
-        assert score == 100  # 40 + 30 + 30
+        assert score == 100  # 35 + 25 + 20 + 20
 
     def test_known_week_old_two_sources(self) -> None:
         from modules.validator.confidence import compute_confidence
@@ -41,7 +41,7 @@ class TestConfidenceScore:
             fetched_at=datetime.now(UTC),
             source_count=2,
         )
-        assert score == 55  # 20 + 20 + 15
+        assert score == 65  # 18 + 17 + 10 + 20
 
     def test_unknown_old_single_source(self) -> None:
         from modules.validator.confidence import compute_confidence
@@ -50,27 +50,27 @@ class TestConfidenceScore:
             published_at=datetime.now(UTC) - timedelta(days=45),
             fetched_at=datetime.now(UTC),
         )
-        assert score == 0  # 0 + 0 + 0
+        assert score == 20  # 0 + 0 + 0 + 20 (clean LLM, no stix_obj provided)
 
     def test_known_30_day_boundary(self) -> None:
         from modules.validator.confidence import compute_confidence
-        # Exactly 29 days → still gets 10pts freshness
+        # Exactly 29 days → still gets 8pts freshness
         score = compute_confidence(
             source_category="known",
             published_at=datetime.now(UTC) - timedelta(days=29),
             fetched_at=datetime.now(UTC),
         )
-        assert score == 30  # 20 + 10 + 0
+        assert score == 46  # 18 + 8 + 0 + 20
 
     def test_published_at_none_uses_fetched_at(self) -> None:
         from modules.validator.confidence import compute_confidence
-        # fetched_at is now → 30pts freshness
+        # fetched_at is now → 25pts freshness
         score = compute_confidence(
             source_category="trusted",
             published_at=None,
             fetched_at=datetime.now(UTC),
         )
-        assert score == 70  # 40 + 30 + 0
+        assert score == 80  # 35 + 25 + 0 + 20
 
     def test_score_capped_at_100(self) -> None:
         from modules.validator.confidence import compute_confidence
@@ -90,6 +90,65 @@ class TestConfidenceScore:
             fetched_at=datetime.now(UTC),
         )
         assert score >= 0
+
+    def test_hallucinations_reduce_quality(self) -> None:
+        from modules.validator.confidence import compute_confidence
+        score_clean = compute_confidence(
+            source_category="trusted",
+            published_at=datetime.now(UTC),
+            fetched_at=datetime.now(UTC),
+            hallucination_count=0,
+        )
+        score_one_hall = compute_confidence(
+            source_category="trusted",
+            published_at=datetime.now(UTC),
+            fetched_at=datetime.now(UTC),
+            hallucination_count=1,
+        )
+        score_four_hall = compute_confidence(
+            source_category="trusted",
+            published_at=datetime.now(UTC),
+            fetched_at=datetime.now(UTC),
+            hallucination_count=4,
+        )
+        assert score_clean == 80   # 35 + 25 + 0 + 20
+        assert score_one_hall == 75   # 35 + 25 + 0 + 15
+        assert score_four_hall == 60  # 35 + 25 + 0 + 0
+
+    def test_threat_actor_without_name_zero_quality(self) -> None:
+        from modules.validator.confidence import compute_confidence
+        score = compute_confidence(
+            source_category="trusted",
+            published_at=datetime.now(UTC),
+            fetched_at=datetime.now(UTC),
+            stix_obj={"type": "threat-actor", "name": ""},
+        )
+        assert score == 60  # 35 + 25 + 0 + 0
+
+    def test_indicator_without_pattern_zero_quality(self) -> None:
+        from modules.validator.confidence import compute_confidence
+        score = compute_confidence(
+            source_category="trusted",
+            published_at=datetime.now(UTC),
+            fetched_at=datetime.now(UTC),
+            stix_obj={"type": "indicator", "pattern": ""},
+        )
+        assert score == 60  # 35 + 25 + 0 + 0
+
+    def test_confidence_with_detail_returns_breakdown(self) -> None:
+        from modules.validator.confidence import compute_confidence_with_detail
+        score, detail = compute_confidence_with_detail(
+            source_category="trusted",
+            published_at=datetime.now(UTC) - timedelta(hours=1),
+            fetched_at=datetime.now(UTC),
+            source_count=2,
+            hallucination_count=1,
+        )
+        assert detail["reliability"] == 35
+        assert detail["freshness"] == 25
+        assert detail["corroboration"] == 10
+        assert detail["llm_quality"] == 15
+        assert score == 85
 
 
 # ── Hallucination detection ───────────────────────────────────
